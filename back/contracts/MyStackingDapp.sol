@@ -3,37 +3,62 @@ pragma solidity 0.8.11;
 
 import "./AALToken.sol";
 
+
+//Hypothese : stacking of WETH to get AALToken
 contract myStackingDapp {
 	
+    //Stake struct with token staked (for now, only ETH), amount of ETH and timestamp of start staking
 	struct Stake {
 		IERC20 stakingToken;
 		uint256 stakingAmount;
-		uint256 stakingTimestamp;
+		uint256 startStakingTimestamp;
 	}
 
+    //Token rewarded for staking
 	AALToken public rewardsToken;
+    
+    //Mapping of Stake per user
 	mapping(address => Stake) public stakes;
+    
+    //TotalSupplyOfToken per token address
+    mapping(address => uint) public totalTokenSupply;
 
+    //Mapping of rewards per User
+    mapping(address => uint) public rewards;
+
+
+    //Launch of this contract with definition of supply of AALToken, maybe to change...
 	constructor(uint256 _initialSupply) {
 		rewardsToken = new AALToken(_initialSupply);
 	}
 
+
 	function stake(address _stakingToken, uint256 _amountToStake) public {
+        uint256 allowance = IERC20(_stakingToken).allowance(msg.sender, address(this));
+        require(allowance >= _amountToStake, "Check the token allowance");
+
 		stakes[msg.sender] = Stake(IERC20(_stakingToken),_amountToStake,block.timestamp);
-		IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
+		totalTokenSupply[_stakingToken] += _amountToStake;
+        IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
 	}
 
-	/// @dev Store ETH in the contract.
-	function store() public payable {
-		//balances[msg.sender]+=msg.value;
-	}
-	
-	/// @dev Redeem your ETH.
-	function redeem() public {
-		//uint toSend = balances[msg.sender];
-		//balances[msg.sender]=0;
-		//msg.sender.call{ value: toSend }("");
-	}
+    function unstake() public {
+        uint256 amountToUnstake = stakes[msg.sender].stakingAmount;
+        stakes[msg.sender].stakingAmount=0;
+        
+        totalTokenSupply[address(stakes[msg.sender].stakingToken)] -= amountToUnstake;
+        stakes[msg.sender].stakingToken.transfer(msg.sender,amountToUnstake);
+    }
+
+    function calcRewardPerToken() public {
+        //getPriceOfETHWithOracle
+        //Reward per second
+    }
+
+    function getReward() view public returns(uint) {
+        return (100*(block.timestamp - stakes[msg.sender].startStakingTimestamp));
+    }
+
 }
 
 /*
@@ -59,7 +84,7 @@ interface IERC20 {
 }
 */
 
-contract StakingRewards {
+/*contract StakingRewards {
 	IERC20 public rewardsToken;
 	IERC20 public stakingToken;
 
@@ -121,4 +146,4 @@ contract StakingRewards {
 		rewardsToken.transfer(msg.sender, reward);
 	}
 }
-
+*/
