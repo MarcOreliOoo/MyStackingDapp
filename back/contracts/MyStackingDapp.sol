@@ -44,10 +44,12 @@ contract myStackingDapp {
 
     function unstake() public {
         uint256 amountToUnstake = stakes[msg.sender].stakingAmount;
-        stakes[msg.sender].stakingAmount=0;
+        IERC20 tokenToUnstake = stakes[msg.sender].stakingToken;
+        delete stakes[msg.sender];
         
         totalTokenSupply[address(stakes[msg.sender].stakingToken)] -= amountToUnstake;
-        stakes[msg.sender].stakingToken.transfer(msg.sender,amountToUnstake);
+        tokenToUnstake.transfer(msg.sender,amountToUnstake);
+        
     }
 
     function calcRewardPerToken() public {
