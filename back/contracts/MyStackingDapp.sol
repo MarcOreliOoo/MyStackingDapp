@@ -26,22 +26,29 @@ contract myStackingDapp {
     //Mapping of rewards per User
     mapping(address => uint) public rewards;
 
-
     //Launch of this contract with definition of supply of AALToken, maybe to change...
 	constructor(uint256 _initialSupply) {
 		rewardsToken = new AALToken(_initialSupply);
 	}
 
-
+    //Todo handle multiple stake of different token for one user.
+    //What happens right now ? erase previous stake ?
 	function stake(address _stakingToken, uint256 _amountToStake) public {
+        //Check allowance of the token IERC20 the user will stake
         uint256 allowance = IERC20(_stakingToken).allowance(msg.sender, address(this));
         require(allowance >= _amountToStake, "Check the token allowance");
 
+        //Create the Stake struc in the Stake per user mapping
 		stakes[msg.sender] = Stake(IERC20(_stakingToken),_amountToStake,block.timestamp);
+
+        //The total supply of that token increases of _amountToStake
 		totalTokenSupply[_stakingToken] += _amountToStake;
+
+        //Transfer from user's wallet to this contract of _amountToStake
         IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
 	}
 
+    //For now, unstake full staked token of a user
     function unstake() public {
         uint256 amountToUnstake = stakes[msg.sender].stakingAmount;
         IERC20 tokenToUnstake = stakes[msg.sender].stakingToken;
@@ -49,7 +56,6 @@ contract myStackingDapp {
         
         totalTokenSupply[address(stakes[msg.sender].stakingToken)] -= amountToUnstake;
         tokenToUnstake.transfer(msg.sender,amountToUnstake);
-        
     }
 
     function calcRewardPerToken() public {
@@ -57,8 +63,13 @@ contract myStackingDapp {
         //Reward per second
     }
 
-    function getReward() view public returns(uint) {
-        return (100*(block.timestamp - stakes[msg.sender].startStakingTimestamp));
+    function getPriceOfToken() pure public returns(uint){
+        return 0;
+    }
+
+    function getReward(address _token) view public returns(uint) {
+
+        return (100*(block.timestamp - stakes[msg.sender].startStakingTimestamp)/totalTokenSupply[_token]);
     }
 
 }
