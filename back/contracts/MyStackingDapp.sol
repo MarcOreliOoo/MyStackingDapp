@@ -82,37 +82,58 @@ contract myStackingDapp {
 
 	/* ============= UNSTAKE ============= */
     
-    function unstake() public {
-       /* uint256 amountToUnstake = stakes[msg.sender].stakingAmount;
-        IERC20 tokenToUnstake = stakes[msg.sender].stakingToken;
-        delete stakes[msg.sender];//TODO enlever ça sinon on peut pas getReward
-        
-        totalTokenSupply[address(stakes[msg.sender].stakingToken)] -= amountToUnstake;
-		tokenToUnstake.transfer(msg.sender,amountToUnstake);*/
+	//TODO Require the _stakingToken is in the list
+	//TODO listOfToken si amountSupply = 0 à remove
+    function unstake(address _stakingToken) public {
+		//Computes reward first (in calc reward the updateTimestamp is updated so we dont do it here)
+		stakes[_stakingToken][msg.sender].rewards += calcRewardPerStake(_stakingToken,msg.sender);
+		
+		uint256 _amountToUnstake = stakes[_stakingToken][msg.sender].stakingAmount;
+		//Update of the total supply of that _stakingToken
+        totalTokenSupply[_stakingToken] -= _amountToUnstake;
+		
+		//Update the struct of the Staker - Stake(0, tsStart, tsUpdated, rewards, false);
+		stakes[_stakingToken][msg.sender].stakingAmount = 0;
+		stakes[_stakingToken][msg.sender].staked = false;
+
+		//Transfer the staked token
+		IERC20(_stakingToken).transfer(msg.sender,_amountToUnstake);
     }
 
 
 	/* ============= REWARDS ============= */
 
-	//TODO : add anti spam
-    function getReward(address _token) public amountStrictPositiv(stakes[_token][msg.sender].stakingAmount) {
+	/**
+	 * Computes rewards and transfers them msg.sender
+	 * _token : staked token
+	 * require max every 30 sec can be called
+	*/
+	//TODO Require the _stakingToken is in the list
+	//TODO require the .transfer > 0
+    function getReward(address _token) public {
+		require(block.timestamp - stakes[_token][msg.sender].updateTimestamp > 30 seconds,"stop spam");
 		//Compute rewards = previous rewards calc + new rewards
-		uint256 rewards = stakes[_token][msg.sender].rewards + calcRewardPerStake(_token, msg.sender);
+		uint256 _rewards = stakes[_token][msg.sender].rewards;
+		if(stakes[_token][msg.sender].stakingAmount > 0) {
+			_rewards += calcRewardPerStake(_token, msg.sender);
+		}
+		
 		//Re entrancy rewards = 0;
 		stakes[_token][msg.sender].rewards = 0;
 		//Transfer rewards
-		rewardsToken.transfer(msg.sender,rewards);
+		rewardsToken.transfer(msg.sender,_rewards);
     }
 
 
     function calcRewardPerStake(address _token, address _sender) internal returns(uint) {
 		//Get the reward
-		uint256 rewards = (rewardRate * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / getPriceOfAllSupply());
+		uint256 _rewards = (rewardRate * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / getPriceOfAllSupply());
 		//Update the timestamp
 		stakes[_token][_sender].updateTimestamp = block.timestamp;
-        return rewards;
+        return _rewards;
     }
 
+	//TODO onlyOwner
 	function getPriceOfAllSupply() view public returns(uint){
 		uint256 amount;
 		for(uint i = 0; i<listOfToken.length ; i++){
