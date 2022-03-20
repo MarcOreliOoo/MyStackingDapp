@@ -17,14 +17,14 @@ contract myStackingDapp {
     //Token rewarded for staking
 	AALToken public rewardsToken;
     
+	uint8 public rewardRate = 100; //To define
+
     //Mapping of Stake per user
 	mapping(address => Stake) public stakes;
     
     //TotalSupplyOfToken per token address
     mapping(address => uint) public totalTokenSupply;
-
-    //Mapping of rewards per User
-    mapping(address => uint) public rewards;
+	address[] public listOfToken;
 
     //Launch of this contract with definition of supply of AALToken, maybe to change...
 	constructor(uint256 _initialSupply) {
@@ -34,6 +34,8 @@ contract myStackingDapp {
     //Todo handle multiple stake of different token for one user.
     //What happens right now ? erase previous stake ?
 	function stake(address _stakingToken, uint256 _amountToStake) public {
+		//Check the amount is > 0
+		require(_amountToStake > 0,"Amount <= 0");
         //Check allowance of the token IERC20 the user will stake
         uint256 allowance = IERC20(_stakingToken).allowance(msg.sender, address(this));
         require(allowance >= _amountToStake, "Check the token allowance");
@@ -43,120 +45,57 @@ contract myStackingDapp {
 
         //The total supply of that token increases of _amountToStake
 		totalTokenSupply[_stakingToken] += _amountToStake;
+		//If the totalSupply of that token is sup of the amount, that means the token already exists, so we don't need to push it in the array
+		if(totalTokenSupply[_stakingToken] <= _amountToStake) {
+			listOfToken.push(_stakingToken);
+		}
 
         //Transfer from user's wallet to this contract of _amountToStake
         IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
 	}
 
     //For now, unstake full staked token of a user
-    function unstake() public {
+    function unstake() public doableAction(msg.sender) {
         uint256 amountToUnstake = stakes[msg.sender].stakingAmount;
         IERC20 tokenToUnstake = stakes[msg.sender].stakingToken;
-        delete stakes[msg.sender];
+        delete stakes[msg.sender];//TODO enlever ça sinon on peut pas getReward
         
         totalTokenSupply[address(stakes[msg.sender].stakingToken)] -= amountToUnstake;
-        tokenToUnstake.transfer(msg.sender,amountToUnstake);
+		tokenToUnstake.transfer(msg.sender,amountToUnstake);
     }
 
-    function calcRewardPerToken() public {
-        //getPriceOfETHWithOracle
-        //Reward per second
-    }
+	/* ============= REWARDS ============= */
 
-    function getPriceOfToken() pure public returns(uint){
-        return 0;
-    }
-
-    function getReward(address _token) view public returns(uint) {
-
-        return (100*(block.timestamp - stakes[msg.sender].startStakingTimestamp)/totalTokenSupply[_token]);
-    }
-
-}
-
-/*
-interface IERC20 {
-	function totalSupply() external view returns (uint);
-
-	function balanceOf(address account) external view returns (uint);
-
-	function transfer(address recipient, uint amount) external returns (bool);
-
-	function allowance(address owner, address spender) external view returns (uint);
-
-	function approve(address spender, uint amount) external returns (bool);
-
-	function transferFrom(
-		address sender,
-		address recipient,
-		uint amount
-	) external returns (bool);
-
-	event Transfer(address indexed from, address indexed to, uint value);
-	event Approval(address indexed owner, address indexed spender, uint value);
-}
-*/
-
-/*contract StakingRewards {
-	IERC20 public rewardsToken;
-	IERC20 public stakingToken;
-
-	uint public rewardRate = 100;
-	uint public lastUpdateTime;
-	uint public rewardPerTokenStored;
-
-	mapping(address => uint) public userRewardPerTokenPaid;
-	mapping(address => uint) public rewards;
-
-	uint private _totalSupply;
-	mapping(address => uint) private _balances;
-
-	constructor(address _stakingToken, address _rewardsToken) {
-		stakingToken = IERC20(_stakingToken);
-		rewardsToken = IERC20(_rewardsToken);
-	}
-
-	function rewardPerToken() public view returns (uint) {
-		if (_totalSupply == 0) {
-			return rewardPerTokenStored;
-		}
-		return
-			rewardPerTokenStored +
-			(((block.timestamp - lastUpdateTime) * rewardRate * 1e18) / _totalSupply);
-	}
-
-	function earned(address account) public view returns (uint) {
-		return
-			((_balances[account] *
-				(rewardPerToken() - userRewardPerTokenPaid[account])) / 1e18) +
-			rewards[account];
-	}
-
-	modifier updateReward(address account) {
-		rewardPerTokenStored = rewardPerToken();
-		lastUpdateTime = block.timestamp;
-
-		rewards[account] = earned(account);
-		userRewardPerTokenPaid[account] = rewardPerTokenStored;
+	modifier doableAction(address account){
+		require(stakes[msg.sender].stakingAmount > 0,"not enough staked");
 		_;
 	}
 
-	function stake(uint _amount) external updateReward(msg.sender) {
-		_totalSupply += _amount;
-		_balances[msg.sender] += _amount;
-		stakingToken.transferFrom(msg.sender, address(this), _amount);
+	//TODO can be call several times
+	// stocker ça dans un array et soustraire au calcul
+    function getReward() public doableAction(msg.sender) {
+		uint256 rewards = calcRewardPerToken(stakes[msg.sender]);
+		rewardsToken.transfer(msg.sender,rewards);
+    }
+
+
+    function calcRewardPerToken(Stake memory aStake) public view returns(uint){
+        return (rewardRate * (block.timestamp - aStake.startStakingTimestamp) * getPriceOfToken(address(aStake.stakingToken)) * aStake.stakingAmount / getPriceOfAllSupply());
+    }
+
+	function getPriceOfAllSupply() view public returns(uint){
+		uint256 amount;
+		for(uint i = 0; i<listOfToken.length ; i++){
+			amount += getPriceOfToken(listOfToken[i])*totalTokenSupply[listOfToken[i]];
+		}
+		return amount;
 	}
 
-	function withdraw(uint _amount) external updateReward(msg.sender) {
-		_totalSupply -= _amount;
-		_balances[msg.sender] -= _amount;
-		stakingToken.transfer(msg.sender, _amount);
-	}
+    function getPriceOfToken(address _token) pure public returns(uint){
+        //Oracle call here
+		return 1;
+    }
 
-	function getReward() external updateReward(msg.sender) {
-		uint reward = rewards[msg.sender];
-		rewards[msg.sender] = 0;
-		rewardsToken.transfer(msg.sender, reward);
-	}
+
+
 }
-*/
