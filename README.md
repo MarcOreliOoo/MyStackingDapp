@@ -18,7 +18,7 @@ Rewards are determined at 3 places :
 - When a user unstake a previously staked token , it computes the rewards of that token that the user will claim lately (so in the same maner as the previous point, it does not transfer it to the user).
 - When a user presses the getReward button, it does not unstake. It only computes the rewards of that token, and transfers it to the user.
 
-The basic formula is then : RewardRate * (currentTs - updatedTs) * price(token) * quantity(token) / totalPrice(token)
+The basic formula is then : RewardRate * (currentTs - updatedTs) * price(token) * quantity(token) / totalPrice(AllToken)
 Where
 - RewardRate stands for the rate of the rewards token the user will get.
 - currentTs : block.timestamp
