@@ -2,7 +2,7 @@
 pragma solidity 0.8.11;
 
 import "./AALToken.sol";
-
+import "./PriceConsumer.sol";
 
 	//mapping(address => Stake) public stakes;
 	//IERC20 stakingToken;
@@ -21,7 +21,8 @@ contract myStackingDapp {
 
     //Token rewarded for staking
 	AALToken public rewardsToken;
-    uint8 public rewardRate = 100; //To define
+    uint8 public rewardRate = 100; //To define : depends of the supply : 100 for <10% supply ; 90 for <20% ; ... 10 < 90% ; 0 if 100% ;
+	PriceConsumer public priceConsumer;
 
     //Mapping of : Stake per User per Token staked
 	// Token A => User A => Stake 1
@@ -45,6 +46,7 @@ contract myStackingDapp {
     //Launch of this contract with definition of supply of AALToken, maybe to change...
 	constructor(uint256 _initialSupply) {
 		rewardsToken = new AALToken(_initialSupply);
+		priceConsumer = new PriceConsumer(0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0);
 	}
 
     /* ============= STAKE ============= */
@@ -142,11 +144,11 @@ contract myStackingDapp {
 		return amount;
 	}
 
-    function getPriceOfToken(address _token) pure public returns(uint){
+    function getPriceOfToken(address _token) view public returns(uint){
         //Oracle call here
-		return 1;
+		int x = priceConsumer.getEthUsdPrice();
+		return uint(x<0?-x:x);
     }
-
 
 
 }
