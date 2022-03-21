@@ -6,6 +6,6 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 /// @dev AALTOken is the ERC20 token we will get in rewards for staking
 contract AALToken is ERC20 {
 	constructor(uint256 _initialSupply) ERC20("AALToken", "AAL") {
-		_mint(msg.sender,_initialSupply);
+		_mint(msg.sender,_initialSupply*10**18);
 	}
 }

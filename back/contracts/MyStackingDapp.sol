@@ -3,12 +3,13 @@ pragma solidity 0.8.11;
 
 import "./AALToken.sol";
 import "./PriceConsumer.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
 	//mapping(address => Stake) public stakes;
 	//IERC20 stakingToken;
     
 //Hypothese : stacking of WETH to get AALToken
-contract myStackingDapp {
+contract myStackingDapp is Ownable {
 	
     //Stake struct with token staked
 	struct Stake {
@@ -43,11 +44,17 @@ contract myStackingDapp {
 		_;
 	}
 
+	modifier stakerExist(address _token, address _sender){
+		require(stakes[_token][_sender].staked || stakes[_token][_sender].rewards > 0,"Not a staker or no rewards");
+		_;
+	}
+
     //Launch of this contract with definition of supply of AALToken, maybe to change...
 	constructor(uint256 _initialSupply) {
 		rewardsToken = new AALToken(_initialSupply);
 		priceConsumer = new PriceConsumer(0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0);
 	}
+
 
     /* ============= STAKE ============= */
 
@@ -67,7 +74,6 @@ contract myStackingDapp {
 			stakes[_stakingToken][msg.sender].rewards += calcRewardPerStake(_stakingToken,msg.sender);
 			stakes[_stakingToken][msg.sender].stakingAmount += _amountToStake;
 			stakes[_stakingToken][msg.sender].updateTimestamp = block.timestamp;
-			//TODO : reward non à jour
 		}
 		
         //The total supply of that token increases of _amountToStake
@@ -82,18 +88,17 @@ contract myStackingDapp {
         IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
 	}
 
+
 	/* ============= UNSTAKE ============= */
     
-	//TODO Require the _stakingToken is in the list
-	//TODO listOfToken si amountSupply = 0 à remove
-    function unstake(address _stakingToken) public {
+	function unstake(address _stakingToken) public stakerExist(_stakingToken,msg.sender){
 		//Computes reward first (in calc reward the updateTimestamp is updated so we dont do it here)
 		stakes[_stakingToken][msg.sender].rewards += calcRewardPerStake(_stakingToken,msg.sender);
 		
 		uint256 _amountToUnstake = stakes[_stakingToken][msg.sender].stakingAmount;
 		//Update of the total supply of that _stakingToken
         totalTokenSupply[_stakingToken] -= _amountToUnstake;
-		
+	
 		//Update the struct of the Staker - Stake(0, tsStart, tsUpdated, rewards, false);
 		stakes[_stakingToken][msg.sender].stakingAmount = 0;
 		stakes[_stakingToken][msg.sender].staked = false;
@@ -110,22 +115,22 @@ contract myStackingDapp {
 	 * _token : staked token
 	 * require max every 30 sec can be called
 	*/
-	//TODO Require the _stakingToken is in the list
-	//TODO require the .transfer > 0
-    function getReward(address _token) public {
-		require(block.timestamp - stakes[_token][msg.sender].updateTimestamp > 30 seconds,"stop spam");
+	
+    function getReward(address _stakingToken) public stakerExist(_stakingToken,msg.sender){
+		require(block.timestamp - stakes[_stakingToken][msg.sender].updateTimestamp > 30 seconds,"stop spam");
 		//Compute rewards = previous rewards calc + new rewards
-		uint256 _rewards = stakes[_token][msg.sender].rewards;
-		if(stakes[_token][msg.sender].stakingAmount > 0) {
-			_rewards += calcRewardPerStake(_token, msg.sender);
+		uint256 _rewards = stakes[_stakingToken][msg.sender].rewards;
+		if(stakes[_stakingToken][msg.sender].stakingAmount > 0) {
+			_rewards += calcRewardPerStake(_stakingToken, msg.sender);
 		}
 		
 		//Re entrancy rewards = 0;
-		stakes[_token][msg.sender].rewards = 0;
+		stakes[_stakingToken][msg.sender].rewards = 0;
+
 		//Transfer rewards
+		require(_rewards > 0,"Rewards = 0");
 		rewardsToken.transfer(msg.sender,_rewards);
     }
-
 
     function calcRewardPerStake(address _token, address _sender) internal returns(uint) {
 		//Get the reward
@@ -135,8 +140,7 @@ contract myStackingDapp {
         return _rewards;
     }
 
-	//TODO onlyOwner
-	function getPriceOfAllSupply() view public returns(uint){
+	function getPriceOfAllSupply() view public onlyOwner returns(uint){
 		uint256 amount;
 		for(uint i = 0; i<listOfToken.length ; i++){
 			amount += getPriceOfToken(listOfToken[i])*totalTokenSupply[listOfToken[i]];
