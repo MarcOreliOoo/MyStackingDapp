@@ -22,8 +22,8 @@ contract myStackingDapp is Ownable {
 
     //Token rewarded for staking
 	AALToken public rewardsToken;
-    uint8 public rewardRate = 100; //To define : depends of the supply : 100 for <10% supply ; 90 for <20% ; ... 10 < 90% ; 0 if 100% ;
 	PriceConsumer public priceConsumer;
+	uint8 public rewardRate;
 
     //Mapping of : Stake per User per Token staked
 	// Token A => User A => Stake 1
@@ -53,8 +53,9 @@ contract myStackingDapp is Ownable {
 	}
 
     //Launch of this contract with definition of supply of AALToken, maybe to change...
-	constructor(uint256 _initialSupply) {
-		rewardsToken = new AALToken(_initialSupply);
+	constructor(uint8 _rewardRate) {
+		rewardRate = _rewardRate;
+		rewardsToken = new AALToken();
 		priceConsumer = new PriceConsumer(0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0);
 	}
 
@@ -89,6 +90,7 @@ contract myStackingDapp is Ownable {
 
         //Transfer from user's wallet to this contract of _amountToStake
         IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
+
 		emit Staking(msg.sender,_amountToStake,_stakingToken);
 	}
 
@@ -132,22 +134,26 @@ contract myStackingDapp is Ownable {
 		//Re entrancy rewards = 0;
 		stakes[_stakingToken][msg.sender].rewards = 0;
 
+		//Mint rewards
+		rewardsToken.mint(msg.sender,_rewards);
+
 		//Transfer rewards
-		require(_rewards > 0 && rewardsToken.totalSupply() > _rewards,"Rewards = 0 or totalSupply reached!");
-		rewardsToken.transfer(msg.sender,_rewards);
+		//require(_rewards > 0 && rewardsToken.totalSupply() > _rewards,"Rewards = 0 or totalSupply reached!");
+		//rewardsToken.transfer(msg.sender,_rewards);
 		emit Rewarding(msg.sender, _rewards,_stakingToken);
     }
 
     function calcRewardPerStake(address _token, address _sender) internal returns(uint) {
-		//Get the reward
-		uint256 _rewards = (getRewardRate() * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply()*100));
+		//Get the rewards : rewardRate * staking period * share of the pool at updateTime
+		//uint256 _rewards = (getRewardRate() * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply()*100));
+		uint256 _rewards = ( (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * rewardRate ));
 		//Update the timestamp
 		stakes[_token][_sender].updateTimestamp = block.timestamp;
         return _rewards;
     }
 	
 	//TODO onlyOwner is a pb here + pb of the array to correct
-	function getPriceOfAllSupply() view public onlyOwner returns(uint){
+	function getPriceOfAllSupply() view public returns(uint){
 		uint256 amount;
 		for(uint i = 0; i<listOfToken.length ; i++){
 			amount += getPriceOfToken(listOfToken[i])*totalTokenSupply[listOfToken[i]];
@@ -157,21 +163,22 @@ contract myStackingDapp is Ownable {
 
     function getPriceOfToken(address _token) view public returns(uint){
         //Oracle call here
-		int x = priceConsumer.getEthUsdPrice();
+		//int x = priceConsumer.getEthUsdPrice();
+		int x=10;
 		return uint(x<0?-x:x);
     }
 
-	function getRewardRate() view public returns(uint){
+	/*function getRewardRate() view public returns(uint){
 		if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 80/100) {
-			return 80;
+			return 8;
 		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 60/100) {
-			return 60;
+			return 6;
 		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 40/100) {
-			return 40;
+			return 4;
 		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 20/100) {
-			return 20;
+			return 2;
 		} else {
-			return 10;
+			return 1;
 		}
-	}
+	}*/
 }
