@@ -38,6 +38,9 @@ contract myStackingDapp is Ownable {
 	address[] public listOfStaker;
 	address[] public listOfToken;
 
+	event Staking(address stakerAddress, uint256 amountToStake, address stakingToken);
+    event Unstaking(address stakerAddress, uint256 amountToUnstake, address stakingToken);
+	event Rewarding(address stakerAddress, uint256 rewards, address stakingToken);
 
 	modifier amountStrictPositiv(uint256 _amount){
 		require(_amount > 0,"Amount <= 0");
@@ -86,6 +89,7 @@ contract myStackingDapp is Ownable {
 
         //Transfer from user's wallet to this contract of _amountToStake
         IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
+		emit Staking(msg.sender,_amountToStake,_stakingToken);
 	}
 
 
@@ -105,6 +109,7 @@ contract myStackingDapp is Ownable {
 
 		//Transfer the staked token
 		IERC20(_stakingToken).transfer(msg.sender,_amountToUnstake);
+		emit Unstaking(msg.sender,_amountToUnstake,_stakingToken);
     }
 
 
@@ -128,18 +133,20 @@ contract myStackingDapp is Ownable {
 		stakes[_stakingToken][msg.sender].rewards = 0;
 
 		//Transfer rewards
-		require(_rewards > 0,"Rewards = 0");
+		require(_rewards > 0 && rewardsToken.totalSupply() > _rewards,"Rewards = 0 or totalSupply reached!");
 		rewardsToken.transfer(msg.sender,_rewards);
+		emit Rewarding(msg.sender, _rewards,_stakingToken);
     }
 
     function calcRewardPerStake(address _token, address _sender) internal returns(uint) {
 		//Get the reward
-		uint256 _rewards = (rewardRate * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / getPriceOfAllSupply());
+		uint256 _rewards = (getRewardRate() * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply()*100));
 		//Update the timestamp
 		stakes[_token][_sender].updateTimestamp = block.timestamp;
         return _rewards;
     }
-
+	
+	//TODO onlyOwner is a pb here + pb of the array to correct
 	function getPriceOfAllSupply() view public onlyOwner returns(uint){
 		uint256 amount;
 		for(uint i = 0; i<listOfToken.length ; i++){
@@ -154,5 +161,17 @@ contract myStackingDapp is Ownable {
 		return uint(x<0?-x:x);
     }
 
-
+	function getRewardRate() view public returns(uint){
+		if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 80/100) {
+			return 80;
+		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 60/100) {
+			return 60;
+		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 40/100) {
+			return 40;
+		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 20/100) {
+			return 20;
+		} else {
+			return 10;
+		}
+	}
 }
