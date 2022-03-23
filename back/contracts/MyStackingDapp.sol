@@ -23,7 +23,8 @@ contract myStackingDapp is Ownable {
     //Token rewarded for staking
 	AALToken public rewardsToken;
 	PriceConsumer public priceConsumer;
-	uint8 public rewardRate;
+	uint8 public immutable DAILY_REWARD_RATE = 2;
+	
 
     //Mapping of : Stake per User per Token staked
 	// Token A => User A => Stake 1
@@ -53,8 +54,7 @@ contract myStackingDapp is Ownable {
 	}
 
     //Launch of this contract with definition of supply of AALToken, maybe to change...
-	constructor(uint8 _rewardRate) {
-		rewardRate = _rewardRate;
+	constructor() {
 		rewardsToken = new AALToken();
 		priceConsumer = new PriceConsumer(0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0);
 	}
@@ -145,14 +145,14 @@ contract myStackingDapp is Ownable {
 
     function calcRewardPerStake(address _token, address _sender) internal returns(uint) {
 		//Get the rewards : rewardRate * staking period * share of the pool at updateTime
-		//uint256 _rewards = (getRewardRate() * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply()*100));
-		uint256 _rewards = ( (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * rewardRate ));
+		//uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * 100 * 1 days );
+		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * 100 );
 		//Update the timestamp
 		stakes[_token][_sender].updateTimestamp = block.timestamp;
         return _rewards;
     }
 	
-	//TODO onlyOwner is a pb here + pb of the array to correct
+	//TODO pb of the array to correct
 	function getPriceOfAllSupply() view public returns(uint){
 		uint256 amount;
 		for(uint i = 0; i<listOfToken.length ; i++){
@@ -163,8 +163,7 @@ contract myStackingDapp is Ownable {
 
     function getPriceOfToken(address _token) view public returns(uint){
         //Oracle call here
-		//int x = priceConsumer.getEthUsdPrice();
-		int x=10;
+		int x = priceConsumer.getPrice(_token,Denominations.USD);
 		return uint(x<0?-x:x);
     }
 
