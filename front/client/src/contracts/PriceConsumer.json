@@ -2936,15 +2936,15 @@
         530
       ],
       "PriceConsumer": [
-        2023
+        2047
       ]
     },
-    "id": 2024,
+    "id": 2048,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1964,
+        "id": 1988,
         "literals": [
           "solidity",
           "0.8",
@@ -2956,10 +2956,10 @@
       {
         "absolutePath": "@chainlink/contracts/src/v0.8/interfaces/FeedRegistryInterface.sol",
         "file": "@chainlink/contracts/src/v0.8/interfaces/FeedRegistryInterface.sol",
-        "id": 1965,
+        "id": 1989,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2024,
+        "scope": 2048,
         "sourceUnit": 531,
         "src": "60:76:13",
         "symbolAliases": [],
@@ -2968,10 +2968,10 @@
       {
         "absolutePath": "@chainlink/contracts/src/v0.8/Denominations.sol",
         "file": "@chainlink/contracts/src/v0.8/Denominations.sol",
-        "id": 1966,
+        "id": 1990,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2024,
+        "scope": 2048,
         "sourceUnit": 117,
         "src": "138:57:13",
         "symbolAliases": [],
@@ -2984,9 +2984,9 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "id": 2023,
+        "id": 2047,
         "linearizedBaseContracts": [
-          2023
+          2047
         ],
         "name": "PriceConsumer",
         "nameLocation": "210:13:13",
@@ -2994,12 +2994,12 @@
         "nodes": [
           {
             "constant": false,
-            "id": 1969,
+            "id": 1993,
             "mutability": "mutable",
             "name": "registry",
             "nameLocation": "262:8:13",
             "nodeType": "VariableDeclaration",
-            "scope": 2023,
+            "scope": 2047,
             "src": "231:39:13",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3008,10 +3008,10 @@
               "typeString": "contract FeedRegistryInterface"
             },
             "typeName": {
-              "id": 1968,
+              "id": 1992,
               "nodeType": "UserDefinedTypeName",
               "pathNode": {
-                "id": 1967,
+                "id": 1991,
                 "name": "FeedRegistryInterface",
                 "nodeType": "IdentifierPath",
                 "referencedDeclaration": 530,
@@ -3028,23 +3028,23 @@
           },
           {
             "body": {
-              "id": 1981,
+              "id": 2005,
               "nodeType": "Block",
               "src": "523:62:13",
               "statements": [
                 {
                   "expression": {
-                    "id": 1979,
+                    "id": 2003,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
-                      "id": 1975,
+                      "id": 1999,
                       "name": "registry",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1969,
+                      "referencedDeclaration": 1993,
                       "src": "534:8:13",
                       "typeDescriptions": {
                         "typeIdentifier": "t_contract$_FeedRegistryInterface_$530",
@@ -3056,11 +3056,11 @@
                     "rightHandSide": {
                       "arguments": [
                         {
-                          "id": 1977,
+                          "id": 2001,
                           "name": "_registry",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1972,
+                          "referencedDeclaration": 1996,
                           "src": "567:9:13",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
@@ -3075,7 +3075,7 @@
                             "typeString": "address"
                           }
                         ],
-                        "id": 1976,
+                        "id": 2000,
                         "name": "FeedRegistryInterface",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -3086,7 +3086,7 @@
                           "typeString": "type(contract FeedRegistryInterface)"
                         }
                       },
-                      "id": 1978,
+                      "id": 2002,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -3107,19 +3107,19 @@
                       "typeString": "contract FeedRegistryInterface"
                     }
                   },
-                  "id": 1980,
+                  "id": 2004,
                   "nodeType": "ExpressionStatement",
                   "src": "534:43:13"
                 }
               ]
             },
             "documentation": {
-              "id": 1970,
+              "id": 1994,
               "nodeType": "StructuredDocumentation",
               "src": "279:207:13",
               "text": " Network: Ethereum Kovan\n Feed Registry: 0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0\n Network: Ethereum Mainnet\n Feed Registry: 0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf"
             },
-            "id": 1982,
+            "id": 2006,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [],
@@ -3127,17 +3127,17 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1973,
+              "id": 1997,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1972,
+                  "id": 1996,
                   "mutability": "mutable",
                   "name": "_registry",
                   "nameLocation": "512:9:13",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1982,
+                  "scope": 2006,
                   "src": "504:17:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -3146,7 +3146,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1971,
+                    "id": 1995,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "504:7:13",
@@ -3162,12 +3162,12 @@
               "src": "503:19:13"
             },
             "returnParameters": {
-              "id": 1974,
+              "id": 1998,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "523:0:13"
             },
-            "scope": 2023,
+            "scope": 2047,
             "src": "492:93:13",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -3175,14 +3175,14 @@
           },
           {
             "body": {
-              "id": 2000,
+              "id": 2024,
               "nodeType": "Block",
               "src": "699:283:13",
               "statements": [
                 {
                   "assignments": [
                     null,
-                    1989,
+                    2013,
                     null,
                     null,
                     null
@@ -3191,12 +3191,12 @@
                     null,
                     {
                       "constant": false,
-                      "id": 1989,
+                      "id": 2013,
                       "mutability": "mutable",
                       "name": "price",
                       "nameLocation": "763:5:13",
                       "nodeType": "VariableDeclaration",
-                      "scope": 2000,
+                      "scope": 2024,
                       "src": "759:9:13",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -3205,7 +3205,7 @@
                         "typeString": "int256"
                       },
                       "typeName": {
-                        "id": 1988,
+                        "id": 2012,
                         "name": "int",
                         "nodeType": "ElementaryTypeName",
                         "src": "759:3:13",
@@ -3220,12 +3220,12 @@
                     null,
                     null
                   ],
-                  "id": 1997,
+                  "id": 2021,
                   "initialValue": {
                     "arguments": [
                       {
                         "expression": {
-                          "id": 1992,
+                          "id": 2016,
                           "name": "Denominations",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
@@ -3236,7 +3236,7 @@
                             "typeString": "type(library Denominations)"
                           }
                         },
-                        "id": 1993,
+                        "id": 2017,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -3252,7 +3252,7 @@
                       },
                       {
                         "expression": {
-                          "id": 1994,
+                          "id": 2018,
                           "name": "Denominations",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
@@ -3263,7 +3263,7 @@
                             "typeString": "type(library Denominations)"
                           }
                         },
-                        "id": 1995,
+                        "id": 2019,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -3290,18 +3290,18 @@
                         }
                       ],
                       "expression": {
-                        "id": 1990,
+                        "id": 2014,
                         "name": "registry",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1969,
+                        "referencedDeclaration": 1993,
                         "src": "889:8:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_contract$_FeedRegistryInterface_$530",
                           "typeString": "contract FeedRegistryInterface"
                         }
                       },
-                      "id": 1991,
+                      "id": 2015,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -3315,7 +3315,7 @@
                         "typeString": "function (address,address) view external returns (uint80,int256,uint256,uint256,uint80)"
                       }
                     },
-                    "id": 1996,
+                    "id": 2020,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -3335,32 +3335,32 @@
                 },
                 {
                   "expression": {
-                    "id": 1998,
+                    "id": 2022,
                     "name": "price",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 1989,
+                    "referencedDeclaration": 2013,
                     "src": "969:5:13",
                     "typeDescriptions": {
                       "typeIdentifier": "t_int256",
                       "typeString": "int256"
                     }
                   },
-                  "functionReturnParameters": 1987,
-                  "id": 1999,
+                  "functionReturnParameters": 2011,
+                  "id": 2023,
                   "nodeType": "Return",
                   "src": "962:12:13"
                 }
               ]
             },
             "documentation": {
-              "id": 1983,
+              "id": 2007,
               "nodeType": "StructuredDocumentation",
               "src": "593:48:13",
               "text": " Returns the ETH / USD price"
             },
             "functionSelector": "a0a8045e",
-            "id": 2001,
+            "id": 2025,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -3368,23 +3368,23 @@
             "nameLocation": "656:14:13",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1984,
+              "id": 2008,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "670:2:13"
             },
             "returnParameters": {
-              "id": 1987,
+              "id": 2011,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1986,
+                  "id": 2010,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2001,
+                  "scope": 2025,
                   "src": "694:3:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -3393,7 +3393,7 @@
                     "typeString": "int256"
                   },
                   "typeName": {
-                    "id": 1985,
+                    "id": 2009,
                     "name": "int",
                     "nodeType": "ElementaryTypeName",
                     "src": "694:3:13",
@@ -3407,7 +3407,7 @@
               ],
               "src": "693:5:13"
             },
-            "scope": 2023,
+            "scope": 2047,
             "src": "647:335:13",
             "stateMutability": "view",
             "virtual": false,
@@ -3415,14 +3415,14 @@
           },
           {
             "body": {
-              "id": 2021,
+              "id": 2045,
               "nodeType": "Block",
               "src": "1114:258:13",
               "statements": [
                 {
                   "assignments": [
                     null,
-                    2012,
+                    2036,
                     null,
                     null,
                     null
@@ -3431,12 +3431,12 @@
                     null,
                     {
                       "constant": false,
-                      "id": 2012,
+                      "id": 2036,
                       "mutability": "mutable",
                       "name": "price",
                       "nameLocation": "1178:5:13",
                       "nodeType": "VariableDeclaration",
-                      "scope": 2021,
+                      "scope": 2045,
                       "src": "1174:9:13",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -3445,7 +3445,7 @@
                         "typeString": "int256"
                       },
                       "typeName": {
-                        "id": 2011,
+                        "id": 2035,
                         "name": "int",
                         "nodeType": "ElementaryTypeName",
                         "src": "1174:3:13",
@@ -3460,15 +3460,15 @@
                     null,
                     null
                   ],
-                  "id": 2018,
+                  "id": 2042,
                   "initialValue": {
                     "arguments": [
                       {
-                        "id": 2015,
+                        "id": 2039,
                         "name": "base",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2004,
+                        "referencedDeclaration": 2028,
                         "src": "1329:4:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -3476,11 +3476,11 @@
                         }
                       },
                       {
-                        "id": 2016,
+                        "id": 2040,
                         "name": "quote",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2006,
+                        "referencedDeclaration": 2030,
                         "src": "1335:5:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -3500,18 +3500,18 @@
                         }
                       ],
                       "expression": {
-                        "id": 2013,
+                        "id": 2037,
                         "name": "registry",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1969,
+                        "referencedDeclaration": 1993,
                         "src": "1304:8:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_contract$_FeedRegistryInterface_$530",
                           "typeString": "contract FeedRegistryInterface"
                         }
                       },
-                      "id": 2014,
+                      "id": 2038,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -3525,7 +3525,7 @@
                         "typeString": "function (address,address) view external returns (uint80,int256,uint256,uint256,uint80)"
                       }
                     },
-                    "id": 2017,
+                    "id": 2041,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -3545,32 +3545,32 @@
                 },
                 {
                   "expression": {
-                    "id": 2019,
+                    "id": 2043,
                     "name": "price",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 2012,
+                    "referencedDeclaration": 2036,
                     "src": "1359:5:13",
                     "typeDescriptions": {
                       "typeIdentifier": "t_int256",
                       "typeString": "int256"
                     }
                   },
-                  "functionReturnParameters": 2010,
-                  "id": 2020,
+                  "functionReturnParameters": 2034,
+                  "id": 2044,
                   "nodeType": "Return",
                   "src": "1352:12:13"
                 }
               ]
             },
             "documentation": {
-              "id": 2002,
+              "id": 2026,
               "nodeType": "StructuredDocumentation",
               "src": "990:45:13",
               "text": " Returns the latest price"
             },
             "functionSelector": "ac41865a",
-            "id": 2022,
+            "id": 2046,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -3578,17 +3578,17 @@
             "nameLocation": "1050:8:13",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2007,
+              "id": 2031,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2004,
+                  "id": 2028,
                   "mutability": "mutable",
                   "name": "base",
                   "nameLocation": "1067:4:13",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2022,
+                  "scope": 2046,
                   "src": "1059:12:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -3597,7 +3597,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 2003,
+                    "id": 2027,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1059:7:13",
@@ -3611,12 +3611,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 2006,
+                  "id": 2030,
                   "mutability": "mutable",
                   "name": "quote",
                   "nameLocation": "1081:5:13",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2022,
+                  "scope": 2046,
                   "src": "1073:13:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -3625,7 +3625,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 2005,
+                    "id": 2029,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1073:7:13",
@@ -3641,17 +3641,17 @@
               "src": "1058:29:13"
             },
             "returnParameters": {
-              "id": 2010,
+              "id": 2034,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2009,
+                  "id": 2033,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2022,
+                  "scope": 2046,
                   "src": "1109:3:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -3660,7 +3660,7 @@
                     "typeString": "int256"
                   },
                   "typeName": {
-                    "id": 2008,
+                    "id": 2032,
                     "name": "int",
                     "nodeType": "ElementaryTypeName",
                     "src": "1109:3:13",
@@ -3674,14 +3674,14 @@
               ],
               "src": "1108:5:13"
             },
-            "scope": 2023,
+            "scope": 2047,
             "src": "1041:331:13",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 2024,
+        "scope": 2048,
         "src": "201:1174:13",
         "usedErrors": []
       }
@@ -3707,15 +3707,15 @@
         530
       ],
       "PriceConsumer": [
-        2023
+        2047
       ]
     },
-    "id": 2024,
+    "id": 2048,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1964,
+        "id": 1988,
         "literals": [
           "solidity",
           "0.8",
@@ -3727,10 +3727,10 @@
       {
         "absolutePath": "@chainlink/contracts/src/v0.8/interfaces/FeedRegistryInterface.sol",
         "file": "@chainlink/contracts/src/v0.8/interfaces/FeedRegistryInterface.sol",
-        "id": 1965,
+        "id": 1989,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2024,
+        "scope": 2048,
         "sourceUnit": 531,
         "src": "60:76:13",
         "symbolAliases": [],
@@ -3739,10 +3739,10 @@
       {
         "absolutePath": "@chainlink/contracts/src/v0.8/Denominations.sol",
         "file": "@chainlink/contracts/src/v0.8/Denominations.sol",
-        "id": 1966,
+        "id": 1990,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2024,
+        "scope": 2048,
         "sourceUnit": 117,
         "src": "138:57:13",
         "symbolAliases": [],
@@ -3755,9 +3755,9 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "id": 2023,
+        "id": 2047,
         "linearizedBaseContracts": [
-          2023
+          2047
         ],
         "name": "PriceConsumer",
         "nameLocation": "210:13:13",
@@ -3765,12 +3765,12 @@
         "nodes": [
           {
             "constant": false,
-            "id": 1969,
+            "id": 1993,
             "mutability": "mutable",
             "name": "registry",
             "nameLocation": "262:8:13",
             "nodeType": "VariableDeclaration",
-            "scope": 2023,
+            "scope": 2047,
             "src": "231:39:13",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3779,10 +3779,10 @@
               "typeString": "contract FeedRegistryInterface"
             },
             "typeName": {
-              "id": 1968,
+              "id": 1992,
               "nodeType": "UserDefinedTypeName",
               "pathNode": {
-                "id": 1967,
+                "id": 1991,
                 "name": "FeedRegistryInterface",
                 "nodeType": "IdentifierPath",
                 "referencedDeclaration": 530,
@@ -3799,23 +3799,23 @@
           },
           {
             "body": {
-              "id": 1981,
+              "id": 2005,
               "nodeType": "Block",
               "src": "523:62:13",
               "statements": [
                 {
                   "expression": {
-                    "id": 1979,
+                    "id": 2003,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
-                      "id": 1975,
+                      "id": 1999,
                       "name": "registry",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1969,
+                      "referencedDeclaration": 1993,
                       "src": "534:8:13",
                       "typeDescriptions": {
                         "typeIdentifier": "t_contract$_FeedRegistryInterface_$530",
@@ -3827,11 +3827,11 @@
                     "rightHandSide": {
                       "arguments": [
                         {
-                          "id": 1977,
+                          "id": 2001,
                           "name": "_registry",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1972,
+                          "referencedDeclaration": 1996,
                           "src": "567:9:13",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
@@ -3846,7 +3846,7 @@
                             "typeString": "address"
                           }
                         ],
-                        "id": 1976,
+                        "id": 2000,
                         "name": "FeedRegistryInterface",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -3857,7 +3857,7 @@
                           "typeString": "type(contract FeedRegistryInterface)"
                         }
                       },
-                      "id": 1978,
+                      "id": 2002,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -3878,19 +3878,19 @@
                       "typeString": "contract FeedRegistryInterface"
                     }
                   },
-                  "id": 1980,
+                  "id": 2004,
                   "nodeType": "ExpressionStatement",
                   "src": "534:43:13"
                 }
               ]
             },
             "documentation": {
-              "id": 1970,
+              "id": 1994,
               "nodeType": "StructuredDocumentation",
               "src": "279:207:13",
               "text": " Network: Ethereum Kovan\n Feed Registry: 0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0\n Network: Ethereum Mainnet\n Feed Registry: 0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf"
             },
-            "id": 1982,
+            "id": 2006,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [],
@@ -3898,17 +3898,17 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1973,
+              "id": 1997,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1972,
+                  "id": 1996,
                   "mutability": "mutable",
                   "name": "_registry",
                   "nameLocation": "512:9:13",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1982,
+                  "scope": 2006,
                   "src": "504:17:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -3917,7 +3917,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1971,
+                    "id": 1995,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "504:7:13",
@@ -3933,12 +3933,12 @@
               "src": "503:19:13"
             },
             "returnParameters": {
-              "id": 1974,
+              "id": 1998,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "523:0:13"
             },
-            "scope": 2023,
+            "scope": 2047,
             "src": "492:93:13",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -3946,14 +3946,14 @@
           },
           {
             "body": {
-              "id": 2000,
+              "id": 2024,
               "nodeType": "Block",
               "src": "699:283:13",
               "statements": [
                 {
                   "assignments": [
                     null,
-                    1989,
+                    2013,
                     null,
                     null,
                     null
@@ -3962,12 +3962,12 @@
                     null,
                     {
                       "constant": false,
-                      "id": 1989,
+                      "id": 2013,
                       "mutability": "mutable",
                       "name": "price",
                       "nameLocation": "763:5:13",
                       "nodeType": "VariableDeclaration",
-                      "scope": 2000,
+                      "scope": 2024,
                       "src": "759:9:13",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -3976,7 +3976,7 @@
                         "typeString": "int256"
                       },
                       "typeName": {
-                        "id": 1988,
+                        "id": 2012,
                         "name": "int",
                         "nodeType": "ElementaryTypeName",
                         "src": "759:3:13",
@@ -3991,12 +3991,12 @@
                     null,
                     null
                   ],
-                  "id": 1997,
+                  "id": 2021,
                   "initialValue": {
                     "arguments": [
                       {
                         "expression": {
-                          "id": 1992,
+                          "id": 2016,
                           "name": "Denominations",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
@@ -4007,7 +4007,7 @@
                             "typeString": "type(library Denominations)"
                           }
                         },
-                        "id": 1993,
+                        "id": 2017,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -4023,7 +4023,7 @@
                       },
                       {
                         "expression": {
-                          "id": 1994,
+                          "id": 2018,
                           "name": "Denominations",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
@@ -4034,7 +4034,7 @@
                             "typeString": "type(library Denominations)"
                           }
                         },
-                        "id": 1995,
+                        "id": 2019,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -4061,18 +4061,18 @@
                         }
                       ],
                       "expression": {
-                        "id": 1990,
+                        "id": 2014,
                         "name": "registry",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1969,
+                        "referencedDeclaration": 1993,
                         "src": "889:8:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_contract$_FeedRegistryInterface_$530",
                           "typeString": "contract FeedRegistryInterface"
                         }
                       },
-                      "id": 1991,
+                      "id": 2015,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -4086,7 +4086,7 @@
                         "typeString": "function (address,address) view external returns (uint80,int256,uint256,uint256,uint80)"
                       }
                     },
-                    "id": 1996,
+                    "id": 2020,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -4106,32 +4106,32 @@
                 },
                 {
                   "expression": {
-                    "id": 1998,
+                    "id": 2022,
                     "name": "price",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 1989,
+                    "referencedDeclaration": 2013,
                     "src": "969:5:13",
                     "typeDescriptions": {
                       "typeIdentifier": "t_int256",
                       "typeString": "int256"
                     }
                   },
-                  "functionReturnParameters": 1987,
-                  "id": 1999,
+                  "functionReturnParameters": 2011,
+                  "id": 2023,
                   "nodeType": "Return",
                   "src": "962:12:13"
                 }
               ]
             },
             "documentation": {
-              "id": 1983,
+              "id": 2007,
               "nodeType": "StructuredDocumentation",
               "src": "593:48:13",
               "text": " Returns the ETH / USD price"
             },
             "functionSelector": "a0a8045e",
-            "id": 2001,
+            "id": 2025,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -4139,23 +4139,23 @@
             "nameLocation": "656:14:13",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1984,
+              "id": 2008,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "670:2:13"
             },
             "returnParameters": {
-              "id": 1987,
+              "id": 2011,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1986,
+                  "id": 2010,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2001,
+                  "scope": 2025,
                   "src": "694:3:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -4164,7 +4164,7 @@
                     "typeString": "int256"
                   },
                   "typeName": {
-                    "id": 1985,
+                    "id": 2009,
                     "name": "int",
                     "nodeType": "ElementaryTypeName",
                     "src": "694:3:13",
@@ -4178,7 +4178,7 @@
               ],
               "src": "693:5:13"
             },
-            "scope": 2023,
+            "scope": 2047,
             "src": "647:335:13",
             "stateMutability": "view",
             "virtual": false,
@@ -4186,14 +4186,14 @@
           },
           {
             "body": {
-              "id": 2021,
+              "id": 2045,
               "nodeType": "Block",
               "src": "1114:258:13",
               "statements": [
                 {
                   "assignments": [
                     null,
-                    2012,
+                    2036,
                     null,
                     null,
                     null
@@ -4202,12 +4202,12 @@
                     null,
                     {
                       "constant": false,
-                      "id": 2012,
+                      "id": 2036,
                       "mutability": "mutable",
                       "name": "price",
                       "nameLocation": "1178:5:13",
                       "nodeType": "VariableDeclaration",
-                      "scope": 2021,
+                      "scope": 2045,
                       "src": "1174:9:13",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -4216,7 +4216,7 @@
                         "typeString": "int256"
                       },
                       "typeName": {
-                        "id": 2011,
+                        "id": 2035,
                         "name": "int",
                         "nodeType": "ElementaryTypeName",
                         "src": "1174:3:13",
@@ -4231,15 +4231,15 @@
                     null,
                     null
                   ],
-                  "id": 2018,
+                  "id": 2042,
                   "initialValue": {
                     "arguments": [
                       {
-                        "id": 2015,
+                        "id": 2039,
                         "name": "base",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2004,
+                        "referencedDeclaration": 2028,
                         "src": "1329:4:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -4247,11 +4247,11 @@
                         }
                       },
                       {
-                        "id": 2016,
+                        "id": 2040,
                         "name": "quote",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2006,
+                        "referencedDeclaration": 2030,
                         "src": "1335:5:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -4271,18 +4271,18 @@
                         }
                       ],
                       "expression": {
-                        "id": 2013,
+                        "id": 2037,
                         "name": "registry",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1969,
+                        "referencedDeclaration": 1993,
                         "src": "1304:8:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_contract$_FeedRegistryInterface_$530",
                           "typeString": "contract FeedRegistryInterface"
                         }
                       },
-                      "id": 2014,
+                      "id": 2038,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -4296,7 +4296,7 @@
                         "typeString": "function (address,address) view external returns (uint80,int256,uint256,uint256,uint80)"
                       }
                     },
-                    "id": 2017,
+                    "id": 2041,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -4316,32 +4316,32 @@
                 },
                 {
                   "expression": {
-                    "id": 2019,
+                    "id": 2043,
                     "name": "price",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 2012,
+                    "referencedDeclaration": 2036,
                     "src": "1359:5:13",
                     "typeDescriptions": {
                       "typeIdentifier": "t_int256",
                       "typeString": "int256"
                     }
                   },
-                  "functionReturnParameters": 2010,
-                  "id": 2020,
+                  "functionReturnParameters": 2034,
+                  "id": 2044,
                   "nodeType": "Return",
                   "src": "1352:12:13"
                 }
               ]
             },
             "documentation": {
-              "id": 2002,
+              "id": 2026,
               "nodeType": "StructuredDocumentation",
               "src": "990:45:13",
               "text": " Returns the latest price"
             },
             "functionSelector": "ac41865a",
-            "id": 2022,
+            "id": 2046,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -4349,17 +4349,17 @@
             "nameLocation": "1050:8:13",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2007,
+              "id": 2031,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2004,
+                  "id": 2028,
                   "mutability": "mutable",
                   "name": "base",
                   "nameLocation": "1067:4:13",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2022,
+                  "scope": 2046,
                   "src": "1059:12:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -4368,7 +4368,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 2003,
+                    "id": 2027,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1059:7:13",
@@ -4382,12 +4382,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 2006,
+                  "id": 2030,
                   "mutability": "mutable",
                   "name": "quote",
                   "nameLocation": "1081:5:13",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2022,
+                  "scope": 2046,
                   "src": "1073:13:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -4396,7 +4396,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 2005,
+                    "id": 2029,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1073:7:13",
@@ -4412,17 +4412,17 @@
               "src": "1058:29:13"
             },
             "returnParameters": {
-              "id": 2010,
+              "id": 2034,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2009,
+                  "id": 2033,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2022,
+                  "scope": 2046,
                   "src": "1109:3:13",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -4431,7 +4431,7 @@
                     "typeString": "int256"
                   },
                   "typeName": {
-                    "id": 2008,
+                    "id": 2032,
                     "name": "int",
                     "nodeType": "ElementaryTypeName",
                     "src": "1109:3:13",
@@ -4445,14 +4445,14 @@
               ],
               "src": "1108:5:13"
             },
-            "scope": 2023,
+            "scope": 2047,
             "src": "1041:331:13",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 2024,
+        "scope": 2048,
         "src": "201:1174:13",
         "usedErrors": []
       }
@@ -4465,7 +4465,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-03-23T15:21:45.324Z",
+  "updatedAt": "2022-03-23T21:53:48.940Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

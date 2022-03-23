@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import ProposalsList from "./ProposalsList";
+import ERC20 from "../contracts/ERC20.json";
 import FormField from "../utils/FormField";
 import CardComponent from "../utils/CardComponent";
 import AlertComponent from "../utils/AlertComponent";
@@ -9,17 +9,36 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-export default function StackeComponent({web3, accounts, contract}){
+export default function StackingComponent({web3, accounts, contract}){
 	const formStakingCreation = useRef(null);
 	const [error,setError] = useState(null);
 	
-	const [isRegistered,setIsRegistered] = useState(false);
-	
+
 	//Stake an amount of en ERC20 token
 	const registeringStaking = async () => {
 		const proposalToken = formStakingCreation.current.token.value;
 		const proposalAmount = formStakingCreation.current.amount.value;
-		if(proposalToken.trim() !== ''){
+		
+		if(proposalToken.trim() !== '' && web3.utils.isAddress(proposalToken) && proposalAmount > 0){
+			
+			// Get the contract instance of the token proposed
+			const token = new web3.eth.Contract(ERC20.abi, proposalToken);
+				
+			const allowance = await token.methods.allowance(accounts[0],contract._address).call();
+
+			if(allowance < proposalAmount) {
+				await token.methods.approve(contract._address,proposalAmount).send({from: accounts[0]})
+				.on("receipt",function(receipt){
+					console.log("Approval");
+				})
+				.on("error",function(error){
+					const parsedError = JSON.stringify(error.message);
+					if (parsedError.includes('revert ')) {
+						setError(parsedError);
+					}
+				});
+			}
+			
 			await contract.methods.stake(proposalToken,proposalAmount).send({from: accounts[0]})
 			.on("receipt",function(receipt){
 				formStakingCreation.current.token.value = "0x...";
@@ -31,6 +50,7 @@ export default function StackeComponent({web3, accounts, contract}){
 					setError(parsedError);
 				}
 			});
+			
 		}
 	};
 
@@ -50,11 +70,8 @@ export default function StackeComponent({web3, accounts, contract}){
 						<Button onClick={registeringStaking} type="submit" variant="secondary" size="sm"> Go </Button>
 					</CardComponent>
 				</Col>
-				<Col md="auto">
-					{/* <ProposalsList accounts={accounts} contract={contract} wfStatus={wfStatus} isRegistred={isRegistered} hasVoted={hasVoted} setHasVoted={setHasVoted} /> */}
-				</Col>
 			</Row>
-			<Row><EventComponent contract={contract} /></Row>
+			{/* <Row><EventComponent contract={contract} /></Row> */}
 		</div>
 	</>
 }

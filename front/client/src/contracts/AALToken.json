@@ -9291,7 +9291,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-03-23T15:21:45.300Z",
+  "updatedAt": "2022-03-23T21:53:48.901Z",
   "devdoc": {
     "details": "AALTOken is the ERC20 token we will get in rewards for staking",
     "kind": "dev",

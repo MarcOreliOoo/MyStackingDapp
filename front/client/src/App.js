@@ -3,8 +3,8 @@ import Container from 'react-bootstrap/Container';
 import myStackingDapp from "./contracts/myStackingDapp.json";
 import getWeb3 from "./utils/getWeb3";
 import Navigation from "./components/Navigation";
-import StackeComponent from "./components/StackeComponent";
-import VotersComponent from "./components/VotersComponent";
+import StackingComponent from "./components/StackingComponent";
+import StakeListComponent from "./components/StakeListComponent";
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -22,12 +22,10 @@ export default function App() {
     const [web3, setWeb3] = useState(null);
     const [accounts, setAccounts] = useState([""]);
     const [contract, setContract] = useState(null);
-	//const [isOwner,setOwner] = useState(false);
-	//const [wfStatus, setStatus] = useState(0);
+	
 	
 	//Handler of connection
 	const handleConnect = useCallback (async function () {
-		console.log("useCallb");
 		try {
 			// Get network provider and web3 instance.			
 			const web3 = await getWeb3();
@@ -39,24 +37,17 @@ export default function App() {
 			const networkId = await web3.eth.net.getId();
 			const deployedNetwork = myStackingDapp.networks[networkId];
 			//const revertB = web3.eth.Contract.handleRevert.true;
+
 			const contract = new web3.eth.Contract(myStackingDapp.abi, deployedNetwork && deployedNetwork.address);
-			
-			// Define if owner is connected
-			//const actualOwner = await contract.methods.owner().call();
-			
+						
 			// Set web3, accounts, contract to the state
 			setWeb3(web3);
 			setContract(contract);
 			setAccounts(accounts);
-			/* if(actualOwner === accounts[0]){
-				setOwner(true);
-			} */
 			
 		} catch (error) {
 			// Catch any errors for any of the above operations
-			alert(
-				`Failed to load web3, accounts, or contract. Did you migrate the contract or install MetaMask? Check console for details.`,
-			);
+			alert(`Failed to load web3, accounts, or contract. Did you migrate the contract or install MetaMask? Check console for details.`,);
 			console.error(error);
 		}
 	},[]);
@@ -87,8 +78,8 @@ export default function App() {
 			<Navigation handleConnect={handleConnect} web3={web3} accounts={accounts} contract={contract} />
 			{/* <Navigation handleConnect={handleConnect} web3={web3} accounts={accounts} contract={contract} setStatus={setStatus} /> */}
 			<Container>
-				<Row><Col><StackeComponent web3={web3} accounts={accounts} contract={contract} /></Col></Row>
-				{/* <Row><Col><StakeListComponent web3={web3} accounts={accounts} contract={contract} /></Col></Row> */}
+				<Row><Col>{contract && <StackingComponent web3={web3} accounts={accounts} contract={contract} />}</Col></Row>
+				<Row><Col>{contract && <StakeListComponent accounts={accounts} contract={contract} />}</Col></Row>
 			</Container>
 		</Container>
 	);

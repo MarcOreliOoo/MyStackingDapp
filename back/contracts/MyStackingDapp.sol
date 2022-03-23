@@ -2,6 +2,7 @@
 pragma solidity 0.8.11;
 
 import "./AALToken.sol";
+import "./TokenBidon.sol";
 import "./PriceConsumer.sol";
 
 
@@ -25,6 +26,8 @@ contract myStackingDapp {
 	PriceConsumer public priceConsumer;
 	uint8 public immutable DAILY_REWARD_RATE = 2;
 	
+	
+
 
     //Mapping of : Stake per User per Token staked
 	// Token A => User A => Stake 1
@@ -57,6 +60,7 @@ contract myStackingDapp {
 	constructor() {
 		rewardsToken = new AALToken();
 		priceConsumer = new PriceConsumer(0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0);
+		stackingToken = new TokenBidon(100000);
 	}
 
 
@@ -180,4 +184,16 @@ contract myStackingDapp {
 			return 1;
 		}
 	}*/
+	
+	/* ============= HELPERS ============= */
+	
+	//Testing field to delete
+	uint8 public wf = 18;
+	TokenBidon public stackingToken;
+	
+	function getTokenList() public view returns(address[] memory){
+		return listOfToken;
+	}
+	
+	//Plus checked the constructor
 }
