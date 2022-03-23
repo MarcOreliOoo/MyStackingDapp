@@ -3,13 +3,13 @@ pragma solidity 0.8.11;
 
 import "./AALToken.sol";
 import "./PriceConsumer.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+
 
 	//mapping(address => Stake) public stakes;
 	//IERC20 stakingToken;
     
 //Hypothese : stacking of WETH to get AALToken
-contract myStackingDapp is Ownable {
+contract myStackingDapp {
 	
     //Stake struct with token staked
 	struct Stake {
