@@ -16,11 +16,6 @@ contract myStackingDapp {
 		bool staked;
 	}
 
-	struct Token {
-		address stakingToken;
-		bool isListed;
-	}
-
 	//Token rewarded for staking
 	AALToken public rewardsToken;
 	TokenBidon public stackingToken;
@@ -39,15 +34,17 @@ contract myStackingDapp {
 
 	//Id token of the list of token
 	mapping(address => uint256) public idTokenOfListOfToken;
-	//delete listOftoken[idTokenOfListOfToken[tokenA]]
 
 	//Helpers
 	address[] public listOfStaker;
 	address[] public listOfToken;
 
+
 	event Staking(address stakerAddress, uint256 amountToStake, address stakingToken);
     event Unstaking(address stakerAddress, uint256 amountToUnstake, address stakingToken);
 	event Rewarding(address stakerAddress, uint256 rewards, address stakingToken);
+
+
 
 	modifier amountStrictPositiv(uint256 _amount){
 		require(_amount > 0,"Amount <= 0");
@@ -108,13 +105,20 @@ contract myStackingDapp {
 	/* ============= UNSTAKE ============= */
     
 	function unstake(address _stakingToken) public stakerExist(_stakingToken,msg.sender){
-		//Computes reward first (in calc reward the updateTimestamp is updated so we dont do it here)
-		stakes[_stakingToken][msg.sender].rewards += calcRewardPerStake(_stakingToken,msg.sender);
 		
+		//Calc and get rewards
+		getReward(_stakingToken);
+		
+		//Re entrancy amount = 0
 		uint256 _amountToUnstake = stakes[_stakingToken][msg.sender].stakingAmount;
-		//Update of the total supply of that _stakingToken
+		
+		//Update of the total supply of that _stakingToken and delete from array if necessary
         totalTokenSupply[_stakingToken] -= _amountToUnstake;
-	
+		if(totalTokenSupply[_stakingToken] <= 0){
+			delete listOfToken[idTokenOfListOfToken[_stakingToken]];
+			delete idTokenOfListOfToken[_stakingToken];
+		}
+		
 		//Update the struct of the Staker - Stake(0, tsStart, tsUpdated, rewards, false);
 		stakes[_stakingToken][msg.sender].stakingAmount = 0;
 		stakes[_stakingToken][msg.sender].staked = false;
@@ -128,60 +132,50 @@ contract myStackingDapp {
 	/* ============= REWARDS ============= */
 
 	/**
-	 * Computes rewards and transfers them to msg.sender
+	 * Computes rewards and mint them to msg.sender
 	 * _token : staked token
 	 * require max every 30 sec can be called
 	*/
-	
     function getReward(address _stakingToken) public stakerExist(_stakingToken,msg.sender){
 		require(block.timestamp - stakes[_stakingToken][msg.sender].updateTimestamp > 30 seconds,"stop spam");
-		//Compute rewards = previous rewards calc + new rewards
-		uint256 _rewards = stakes[_stakingToken][msg.sender].rewards;
+		
+		//Compute rewards = previous rewards calc (exemple : different staking time of the same token) + new rewards
+		uint256 _rewardsInToken = stakes[_stakingToken][msg.sender].rewards;
 		if(stakes[_stakingToken][msg.sender].stakingAmount > 0) {
-			_rewards += calcRewardPerStake(_stakingToken, msg.sender);
+			_rewardsInToken += calcRewardPerStake(_stakingToken, msg.sender);
 		}
 		
-
-
 		//Re entrancy rewards = 0;
 		stakes[_stakingToken][msg.sender].rewards = 0;
 
+		//Convert rewards here
+		uint256 _rewardsInPrice = calcRewardPrice(_stakingToken, _rewardsInToken);
+
 		//Mint rewards
-		rewardsToken.mint(msg.sender,_rewards);
+		rewardsToken.mint(msg.sender,_rewardsInPrice);
 		
-		emit Rewarding(msg.sender, _rewards,address(rewardsToken));
+		emit Rewarding(msg.sender, _rewardsInPrice, address(rewardsToken));
     }
 
-    function calcRewardPerStake(address _token, address _sender) internal returns(uint) {
-		//Get the rewards : rewardRate * staking period * share of the pool at updateTime
-		//uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * 100 * 1 days );
-		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * 100 );
+	//Get the rewards in "staked token" : rewardRate/100 * staking period * share of the pool at updateTime
+    function calcRewardPerStake(address _token, address _sender) public returns(uint) {
+		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * stakes[_token][_sender].stakingAmount / (totalTokenSupply[_token] * 100 );
+
 		//Update the timestamp
 		stakes[_token][_sender].updateTimestamp = block.timestamp;
+
         return _rewards;
     }
 	
-	function calcRewardPerStakeAtRewards(address _token, address _sender) internal returns(uint) {
-		//Get the rewards : rewardRate * staking period * share of the pool at updateTime
-		//uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * 100 * 1 days );
-		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * 100 );
-		//Update the timestamp
-		stakes[_token][_sender].updateTimestamp = block.timestamp;
-        return _rewards;
+	//Get the rewards in price : _rewards * price[_token]	
+	function calcRewardPrice(address _token, uint256 _rewards) view public returns(uint) {
+		return _rewards * getPriceOfToken(_token);
     }
 
-	//TODO pb of the array to correct
-	function getPriceOfAllSupply() view public returns(uint){
-		uint256 amount;
-		for(uint i = 0; i<listOfToken.length ; i++){
-			amount += getPriceOfToken(listOfToken[i])*totalTokenSupply[listOfToken[i]];
-		}
-		return amount;
-	}
-
+	//Get the price in USD with chainlink of the _token
     function getPriceOfToken(address _token) view public returns(uint){
-        //Oracle call here
-		int x = priceConsumer.getPrice(_token,Denominations.USD);
+		int x = 100;
+		//int x = priceConsumer.getPrice(_token,Denominations.USD);
 		return uint(x<0?-x:x);
     }
 
