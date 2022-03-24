@@ -5,11 +5,6 @@ import "./AALToken.sol";
 import "./TokenBidon.sol";
 import "./PriceConsumer.sol";
 
-
-	//mapping(address => Stake) public stakes;
-	//IERC20 stakingToken;
-    
-//Hypothese : stacking of WETH to get AALToken
 contract myStackingDapp {
 	
     //Stake struct with token staked
@@ -37,7 +32,10 @@ contract myStackingDapp {
 
 	//TotalSupplyOfToken per token address
     mapping(address => uint256) public totalTokenSupply;
-
+	mapping(address => uint256) public idTokenOfListOfToken
+	
+	delete listOftoken[idTokenOfListOfToken[tokenA]]
+	
 	//Helpers
 	address[] public listOfStaker;
 	address[] public listOfToken;
@@ -60,7 +58,6 @@ contract myStackingDapp {
 	constructor() {
 		rewardsToken = new AALToken();
 		priceConsumer = new PriceConsumer(0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0);
-		stackingToken = new TokenBidon(100000);
 	}
 
 
@@ -103,8 +100,7 @@ contract myStackingDapp {
     
 	function unstake(address _stakingToken) public stakerExist(_stakingToken,msg.sender){
 		//Computes reward first (in calc reward the updateTimestamp is updated so we dont do it here)
-		stakes[_stakingToken][msg.sender].rewards += 10;
-		//calcRewardPerStake(_stakingToken,msg.sender);
+		stakes[_stakingToken][msg.sender].rewards += calcRewardPerStake(_stakingToken,msg.sender);
 		
 		uint256 _amountToUnstake = stakes[_stakingToken][msg.sender].stakingAmount;
 		//Update of the total supply of that _stakingToken
@@ -123,7 +119,7 @@ contract myStackingDapp {
 	/* ============= REWARDS ============= */
 
 	/**
-	 * Computes rewards and transfers them msg.sender
+	 * Computes rewards and transfers them to msg.sender
 	 * _token : staked token
 	 * require max every 30 sec can be called
 	*/
@@ -141,10 +137,7 @@ contract myStackingDapp {
 
 		//Mint rewards
 		rewardsToken.mint(msg.sender,_rewards);
-
-		//Transfer rewards
-		//require(_rewards > 0 && rewardsToken.totalSupply() > _rewards,"Rewards = 0 or totalSupply reached!");
-		//rewardsToken.transfer(msg.sender,_rewards);
+		
 		emit Rewarding(msg.sender, _rewards,address(rewardsToken));
     }
 
@@ -172,25 +165,9 @@ contract myStackingDapp {
 		return uint(x<0?-x:x);
     }
 
-	/*function getRewardRate() view public returns(uint){
-		if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 80/100) {
-			return 8;
-		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 60/100) {
-			return 6;
-		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 40/100) {
-			return 4;
-		} else if(rewardsToken.totalSupply() > rewardsToken.initialSupply() * 20/100) {
-			return 2;
-		} else {
-			return 1;
-		}
-	}*/
 	
 	/* ============= HELPERS ============= */
 	
-	//Testing field to delete
-	uint8 public wf = 18;
-	TokenBidon public stackingToken;
 	
 	function getTokenList() public view returns(address[] memory){
 		return listOfToken;

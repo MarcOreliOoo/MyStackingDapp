@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
-import timeSince from "../utils/timeSince";
+import time from "../utils/time";
 
 
 export default function StakeListComponent({web3, accounts, contract}){
@@ -19,10 +19,11 @@ export default function StakeListComponent({web3, accounts, contract}){
 			if(contract){
 				const response = await contract.methods.getTokenList().call();
 				setTokenList(response);
+				console.log(response);
 				setLoading(false);
 			}
 		})();
-	},[tokenList]);
+	},[]);
 
 
 	if (loading || tokenList.length==0){
@@ -53,7 +54,7 @@ export default function StakeListComponent({web3, accounts, contract}){
 				<tbody>
 					{tokenList.map(t => 
 						<tr key={tokenList.indexOf(t)}>
-							<Stake web3={web3} id={tokenList.indexOf(t)} address={t} accounts={accounts} contract={contract} />
+							<Stake web3={web3} accounts={accounts} contract={contract} id={tokenList.indexOf(t)} address={t}  />
 						</tr>
 					)}
 				</tbody>
@@ -68,7 +69,7 @@ function Stake({web3, id, address, accounts, contract}){
 	const [tokenName, setTokenName] = useState("");
 	const [tokenDecimals, setTokenDecimals] = useState("");
 	const [stake, setStake] = useState(null);
-	const [toogle,setToogle] = useState(true);
+	const [toogle,setToogle] = useState(false); //TODO when toogle form will be handle think about change this
 
 	//Get the token name from ERC20
 	useEffect(function(){
@@ -87,14 +88,14 @@ function Stake({web3, id, address, accounts, contract}){
 	useEffect(function(){
 		(async function(){
 			if(address){
-				console.log(accounts[0]);
 				const _stake = await contract.methods.stakes(address,accounts[0]).call();
-				if(_stake.staked || toogle){
+				if(_stake.staked || _stake.rewards > 0){
 					setStake(_stake);
 					console.log(_stake);
 				}
 			}
 		})();
+
 	},[]);
 	
 
@@ -102,21 +103,35 @@ function Stake({web3, id, address, accounts, contract}){
 		e.preventDefault();
 	}
 
+	const handleUnstake = async () => {
+		if(stake.stakingAmount > 0){
+			console.log(web3.utils.isAddress(address));
+			await contract.methods.unstake(address).send({from: accounts[0]})
+			.on("receipt",function(receipt){
+				console.log(receipt);
+			})
+			.on("error",function(error){
+				console.log(error);
+			});
+		}
+	};
+
 	if(stake == null){
 		return <></>
 	}
+	//TODO timeSince and time doesnt work
 	return <>
 		<td>{id}</td>
 		<td>{address}</td>
 		<td>{tokenName}</td>
 		<td>{stake.stakingAmount/10**tokenDecimals}</td>
-		<td>{timeSince(stake.startStakingTimestamp)}</td>
-		<td>{timeSince(stake.updateTimestamp)}</td>
+		<td>{time(stake.startStakingTimestamp)}</td>
+		<td>{time(stake.updateTimestamp)}</td>
 		<td>{stake.rewards}</td>
 		<td className="d-grid gap-4">
 			<ButtonGroup size="sm">
 				<Button onClick={handleRewards} variant="primary" size="sm"> Stake more </Button>
-				<Button onClick={handleRewards} variant="primary" size="sm"> Unstake </Button>
+				<Button onClick={handleUnstake} variant="primary" size="sm"> Unstake </Button>
 				<Button onClick={handleRewards} variant="primary" size="sm"> Get rewards </Button>
 			</ButtonGroup>
 		</td>
