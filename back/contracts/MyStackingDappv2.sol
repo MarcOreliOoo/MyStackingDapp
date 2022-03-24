@@ -6,8 +6,8 @@ import "./TokenBidon.sol";
 import "./PriceConsumer.sol";
 
 contract myStackingDapp {
-	
-    //Stake struct with token staked
+
+	//Stake struct with token staked
 	struct Stake {
 		uint256 stakingAmount;
 		uint256 startStakingTimestamp;
@@ -16,26 +16,31 @@ contract myStackingDapp {
 		bool staked;
 	}
 
-    //Token rewarded for staking
+	struct Token {
+		address stakingToken;
+		bool isListed;
+	}
+
+	//Token rewarded for staking
 	AALToken public rewardsToken;
+	TokenBidon public stackingToken;
 	PriceConsumer public priceConsumer;
 	uint8 public immutable DAILY_REWARD_RATE = 2;
-	
-	
 
 
-    //Mapping of : Stake per User per Token staked
+	//Mapping of : Stake per User per Token staked
 	// Token A => User A => Stake 1
 	// Token A => User B => Stake 2
 	// Token B => User A => Stake 3
 	mapping(address => mapping(address => Stake)) public stakes;
 
 	//TotalSupplyOfToken per token address
-    mapping(address => uint256) public totalTokenSupply;
-	mapping(address => uint256) public idTokenOfListOfToken
-	
-	delete listOftoken[idTokenOfListOfToken[tokenA]]
-	
+	mapping(address => uint256) public totalTokenSupply;
+
+	//Id token of the list of token
+	mapping(address => uint256) public idTokenOfListOfToken;
+	//delete listOftoken[idTokenOfListOfToken[tokenA]]
+
 	//Helpers
 	address[] public listOfStaker;
 	address[] public listOfToken;
@@ -54,10 +59,13 @@ contract myStackingDapp {
 		_;
 	}
 
-    //Launch of this contract with definition of supply of AALToken, maybe to change...
+    //TODO change PriceConsumer in function of network
+	//TODO delete TokenBin once testing ends
 	constructor() {
 		rewardsToken = new AALToken();
 		priceConsumer = new PriceConsumer(0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0);
+		stackingToken = new TokenBidon(100000);
+		listOfToken.push();
 	}
 
 
@@ -69,11 +77,17 @@ contract myStackingDapp {
         require(IERC20(_stakingToken).allowance(msg.sender, address(this)) >= _amountToStake, "Check the token allowance");
 
         if(!stakes[_stakingToken][msg.sender].staked){
-			//If this stake does not exist : Create the Stake struc in the Stake per User per Token mapping
+			//If this stake does not exist : Create the Stake struct in the Stake per User per Token mapping
 			uint256 ts = block.timestamp;
 			stakes[_stakingToken][msg.sender] = Stake(_amountToStake, ts, ts, 0, true);
 			//And push that new staker
 			listOfStaker.push(msg.sender);
+
+			//If this id is > 0 then it already exist in the list
+			if(idTokenOfListOfToken[_stakingToken] <= 0){
+				listOfToken.push(_stakingToken);
+				idTokenOfListOfToken[_stakingToken] = listOfToken.length-1;
+			}
 		} else {
 			//If this stake already exists : Compute previous reward, update the timestamp and the amount
 			stakes[_stakingToken][msg.sender].rewards += calcRewardPerStake(_stakingToken,msg.sender);
@@ -83,11 +97,6 @@ contract myStackingDapp {
 		
         //The total supply of that token increases of _amountToStake
 		totalTokenSupply[_stakingToken] += _amountToStake;
-
-		//If the totalSupply of that token is sup of the amount, that means the token already exists, so we don't need to push it in the array
-		if(totalTokenSupply[_stakingToken] <= _amountToStake) {
-			listOfToken.push(_stakingToken);
-		}
 
         //Transfer from user's wallet to this contract of _amountToStake
         IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
@@ -132,6 +141,8 @@ contract myStackingDapp {
 			_rewards += calcRewardPerStake(_stakingToken, msg.sender);
 		}
 		
+
+
 		//Re entrancy rewards = 0;
 		stakes[_stakingToken][msg.sender].rewards = 0;
 
@@ -150,6 +161,15 @@ contract myStackingDapp {
         return _rewards;
     }
 	
+	function calcRewardPerStakeAtRewards(address _token, address _sender) internal returns(uint) {
+		//Get the rewards : rewardRate * staking period * share of the pool at updateTime
+		//uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * 100 * 1 days );
+		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * getPriceOfToken(_token) * stakes[_token][_sender].stakingAmount / (getPriceOfAllSupply() * 100 );
+		//Update the timestamp
+		stakes[_token][_sender].updateTimestamp = block.timestamp;
+        return _rewards;
+    }
+
 	//TODO pb of the array to correct
 	function getPriceOfAllSupply() view public returns(uint){
 		uint256 amount;
