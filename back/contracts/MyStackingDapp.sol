@@ -144,7 +144,7 @@ contract myStackingDapp {
 		//Transfer rewards
 		//require(_rewards > 0 && rewardsToken.totalSupply() > _rewards,"Rewards = 0 or totalSupply reached!");
 		//rewardsToken.transfer(msg.sender,_rewards);
-		emit Rewarding(msg.sender, _rewards,_stakingToken);
+		emit Rewarding(msg.sender, _rewards,address(rewardsToken));
     }
 
     function calcRewardPerStake(address _token, address _sender) internal returns(uint) {

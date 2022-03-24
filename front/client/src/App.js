@@ -5,6 +5,7 @@ import getWeb3 from "./utils/getWeb3";
 import Navigation from "./components/Navigation";
 import StackingComponent from "./components/StackingComponent";
 import StakeListComponent from "./components/StakeListComponent";
+import EventComponent from "./components/EventComponent";
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -79,7 +80,8 @@ export default function App() {
 			{/* <Navigation handleConnect={handleConnect} web3={web3} accounts={accounts} contract={contract} setStatus={setStatus} /> */}
 			<Container>
 				<Row><Col>{contract && <StackingComponent web3={web3} accounts={accounts} contract={contract} />}</Col></Row>
-				<Row><Col>{contract && <StakeListComponent accounts={accounts} contract={contract} />}</Col></Row>
+				<Row><Col>{contract && <StakeListComponent web3={web3} accounts={accounts} contract={contract} />}</Col></Row>
+				<Row><EventComponent contract={contract} /></Row>
 			</Container>
 		</Container>
 	);

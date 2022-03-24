@@ -9,39 +9,31 @@ export default function EventComponent({contract}){
 	const [dateTime,setDateTime] = useState(Date.now());
 	const [show,setShow] =  useState(false); //Toast isnt printing by default
 
-//	const [listVoters, setlistVoters] = 
-
 	useEffect(function(){
 		if(contract){
 			const timer = window.setInterval(function(){
 				contract.once(
 					"allEvents",
 					function(error, event){
-						if(event.event == "VoterRegistered") {
+						if(event.event == "Staking") {
+							console.log("event")
 							setEventEmitted({
 								eventEmittedName:event.event,
-								eventEmittedContent:event.returnValues.voterAddress
+								eventEmittedContent:event.returnValues.stakerAddress + " staked " + event.returnValues.amountToStake + " of " + event.returnValues.stakingToken
 							});
 							setDateTime(Date.now());
 							setShow(true);
-						} else if (event.event == "WorkflowStatusChange"){
+						} else if (event.event == "Unstaking"){
 							setEventEmitted({
 								eventEmittedName:event.event,
-								eventEmittedContent:"From "+event.returnValues.previousStatus + " to " +event.returnValues.newStatus
+								eventEmittedContent:event.returnValues.stakerAddress + " unstaked " + event.returnValues.amountToUnstake + " of " + event.returnValues.stakingToken
 							});
 							setDateTime(Date.now());
 							setShow(true);
-						} else if (event.event == "ProposalRegistered"){
+						} else if (event.event == "Rewarding"){
 							setEventEmitted({
 								eventEmittedName:event.event,
-								eventEmittedContent:"Proposal "+event.returnValues.proposalId + " registred !"
-							});
-							setDateTime(Date.now());
-							setShow(true);
-						} else if (event.event == "Voted"){
-							setEventEmitted({
-								eventEmittedName:event.event,
-								eventEmittedContent:"Voter "+event.returnValues.voter + " voted for "+event.returnValues.proposalId
+								eventEmittedContent:event.returnValues.stakerAddress + " get rewarded of " + event.returnValues.rewards + " " + event.returnValues.stakingToken
 							});
 							setDateTime(Date.now());
 							setShow(true);
@@ -54,25 +46,6 @@ export default function EventComponent({contract}){
 			};
 		}
 	},[]);
-
-	//It works too
-	/* useEffect(function(){
-		if(contract){
-			const timer = window.setInterval(function(){
-				contract.events.VoterRegistered().on("data",function(event){
-					setEventEmitted({
-						eventEmittedName:event.event,
-						eventEmittedContent:event.returnValues.voterAddress
-					});
-					setDateTime(Date.now());
-					setShow(true);//Toast to print
-				});
-			},1000);
-			return function(){
-				clearInterval(timer);
-			};
-		}
-	},[]); */
 
 	return <>{eventEmitted &&
 		<ToastContainer position="top-end" className="p-3">

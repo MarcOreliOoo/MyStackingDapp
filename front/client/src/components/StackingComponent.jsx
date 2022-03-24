@@ -3,7 +3,6 @@ import ERC20 from "../contracts/ERC20.json";
 import FormField from "../utils/FormField";
 import CardComponent from "../utils/CardComponent";
 import AlertComponent from "../utils/AlertComponent";
-import EventComponent from "./EventComponent";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -71,7 +70,6 @@ export default function StackingComponent({web3, accounts, contract}){
 					</CardComponent>
 				</Col>
 			</Row>
-			{/* <Row><EventComponent contract={contract} /></Row> */}
 		</div>
 	</>
 }
