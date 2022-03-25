@@ -40,11 +40,15 @@ contract myStackingDapp {
 	address[] public listOfToken;
 
 
+	/* ============= EVENT ============= */
+
 	event Staking(address stakerAddress, uint256 amountToStake, address stakingToken);
     event Unstaking(address stakerAddress, uint256 amountToUnstake, address stakingToken);
 	event Rewarding(address stakerAddress, uint256 rewards, address stakingToken);
+	event Log(string message);
 
-
+	
+	/* ============= MODIFIER ============= */
 
 	modifier amountStrictPositiv(uint256 _amount){
 		require(_amount > 0,"Amount <= 0");
@@ -138,32 +142,25 @@ contract myStackingDapp {
 	*/
     function getReward(address _stakingToken) public stakerExist(_stakingToken,msg.sender){
 		require(block.timestamp - stakes[_stakingToken][msg.sender].updateTimestamp > 30 seconds,"stop spam");
-		
 		//Compute rewards = previous rewards calc (exemple : different staking time of the same token) + new rewards
 		uint256 _rewardsInToken = stakes[_stakingToken][msg.sender].rewards;
 		if(stakes[_stakingToken][msg.sender].stakingAmount > 0) {
 			_rewardsInToken += calcRewardPerStake(_stakingToken, msg.sender);
 		}
-		
 		//Re entrancy rewards = 0;
 		stakes[_stakingToken][msg.sender].rewards = 0;
-
 		//Convert rewards here
 		uint256 _rewardsInPrice = calcRewardPrice(_stakingToken, _rewardsInToken);
-
 		//Mint rewards
 		rewardsToken.mint(msg.sender,_rewardsInPrice);
-		
 		emit Rewarding(msg.sender, _rewardsInPrice, address(rewardsToken));
     }
 
 	//Get the rewards in "staked token" : rewardRate/100 * staking period * share of the pool at updateTime
     function calcRewardPerStake(address _token, address _sender) public returns(uint) {
 		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * stakes[_token][_sender].stakingAmount / (totalTokenSupply[_token] * 100 );
-
 		//Update the timestamp
 		stakes[_token][_sender].updateTimestamp = block.timestamp;
-
         return _rewards;
     }
 	
@@ -174,14 +171,15 @@ contract myStackingDapp {
 
 	//Get the price in USD with chainlink of the _token
     function getPriceOfToken(address _token) view public returns(uint){
-		int x = 100;
-		//int x = priceConsumer.getPrice(_token,Denominations.USD);
-		return uint(x<0?-x:x);
-    }
+		try priceConsumer.getPrice(_token,Denominations.USD) returns(int x){
+			return uint(x<0?-x:x);
+		} catch {
+			return 1;
+		}
+	}
 
 	
 	/* ============= HELPERS ============= */
-	
 	
 	function getTokenList() public view returns(address[] memory){
 		return listOfToken;
