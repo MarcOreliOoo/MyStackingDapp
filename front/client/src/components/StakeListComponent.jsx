@@ -8,33 +8,46 @@ import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
 import time from "../utils/time";
 
+const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-export default function StakeListComponent({web3, accounts, contract}){
+export default function StakeListComponent({web3, accounts, contract, stakedToken}){
 	const [loading, setLoading] = useState(true); //By default is loading
 	const [tokenList, setTokenList] = useState([]);
-	const [stakes, setStakes] = useState({});
+	const [allStakesVisible,toggleStakes] = useToggle();
+	const [unstakedToken, setUnstakedToken] = useState("");
 
 	useEffect(function(){
 		(async function(){
 			if(contract){
 				const response = await contract.methods.getTokenList().call();
-				setTokenList(response);
-				console.log(response);
+				//Exclusion of NULL_ADDRESS;
+				const _tokenList = response.filter(anAddress => anAddress != NULL_ADDRESS);
+				setTokenList(_tokenList);
 				setLoading(false);
 			}
 		})();
-	},[]);
+	},[stakedToken,unstakedToken, allStakesVisible]);
 
-
-	if (loading || tokenList.length==0){
+	const unstakeToken = async (address) =>{
+		await contract.methods.unstake(address).send({from: accounts[0]})
+			.on("receipt",function(receipt){
+				setUnstakedToken(address);
+				console.log(receipt);
+			})
+			.on("error",function(error){
+				console.log(error);
+			});
+	};
+	
+	if (loading){//|| tokenList.length==0
 		return <></>;
 	}
-	return <div className="container mt-4">
+	return <>
 		<Card>
 			<Card.Header >
 				<Stack gap={2} direction="horizontal">
 					<div className="me-auto h5">Staking</div>
-					<Form><Form.Check type="switch" id="custom-switch" label="Staked only" /></Form>
+					<Form><Form.Check type="switch" id="custom-switch" label="Staked only" onChange={toggleStakes} checked={allStakesVisible}/></Form>
 				</Stack>
 			</Card.Header>
 			<Card.Body>
@@ -54,22 +67,31 @@ export default function StakeListComponent({web3, accounts, contract}){
 				<tbody>
 					{tokenList.map(t => 
 						<tr key={tokenList.indexOf(t)}>
-							<Stake web3={web3} accounts={accounts} contract={contract} id={tokenList.indexOf(t)} address={t}  />
+							<Stake web3={web3} accounts={accounts} contract={contract} id={tokenList.indexOf(t)} address={t} setUnstakedToken={unstakeToken} allStakesVisible={allStakesVisible} />
 						</tr>
 					)}
 				</tbody>
 				</Table>
 			</Card.Body>
 		</Card>
-	</div>
+	</>
+}
+
+function useToggle(initialValue = true){
+	const [value,setValue] = useState(initialValue);
+	const toggle = function () {
+		setValue(v => !v);
+		console.log(value);
+	}
+	return [value,toggle];
 }
 
 
-function Stake({web3, id, address, accounts, contract}){
+function Stake({web3, id, address, accounts, contract, setUnstakedToken, allStakesVisible}){
 	const [tokenName, setTokenName] = useState("");
 	const [tokenDecimals, setTokenDecimals] = useState("");
 	const [stake, setStake] = useState(null);
-	const [toogle,setToogle] = useState(false); //TODO when toogle form will be handle think about change this
+	const [disable, setDisable] = useState(true);
 
 	//Get the token name from ERC20
 	useEffect(function(){
@@ -89,24 +111,29 @@ function Stake({web3, id, address, accounts, contract}){
 		(async function(){
 			if(address){
 				const _stake = await contract.methods.stakes(address,accounts[0]).call();
-				if(_stake.staked || _stake.rewards > 0){
+				if(_stake.staked || _stake.rewards > 0 || !allStakesVisible){
 					setStake(_stake);
+					setDisable(false);
 					console.log(_stake);
 				}
 			}
 		})();
+	},[allStakesVisible]);
 
-	},[]);
-	
-
-	const handleRewards = async function(e){
+	const handleRestake = async function(e){
 		e.preventDefault();
 	}
 
-	const handleUnstake = async () => {
+	const handleUnstake = async function(e){
+		e.preventDefault();
 		if(stake.stakingAmount > 0){
-			console.log(web3.utils.isAddress(address));
-			await contract.methods.unstake(address).send({from: accounts[0]})
+			await setUnstakedToken(address);
+		}
+	};
+
+	const handleRewards = async () => {
+		if(stake.stakingAmount > 0){
+			await contract.methods.getReward(address).send({from: accounts[0]})
 			.on("receipt",function(receipt){
 				console.log(receipt);
 			})
@@ -130,9 +157,9 @@ function Stake({web3, id, address, accounts, contract}){
 		<td>{stake.rewards}</td>
 		<td className="d-grid gap-4">
 			<ButtonGroup size="sm">
-				<Button onClick={handleRewards} variant="primary" size="sm"> Stake more </Button>
-				<Button onClick={handleUnstake} variant="primary" size="sm"> Unstake </Button>
-				<Button onClick={handleRewards} variant="primary" size="sm"> Get rewards </Button>
+				<Button onClick={handleRestake} variant="primary" size="sm"> Stake more </Button>
+				<Button onClick={handleUnstake} variant={disable?"secondary":"primary"} size="sm" disabled={disable}> Unstake </Button>
+				<Button onClick={handleRewards} variant={disable?"secondary":"primary"} size="sm" disabled={disable}> Get rewards </Button>
 			</ButtonGroup>
 		</td>
 	</>

@@ -3,15 +3,16 @@ import ERC20 from "../contracts/ERC20.json";
 import FormField from "../utils/FormField";
 import CardComponent from "../utils/CardComponent";
 import AlertComponent from "../utils/AlertComponent";
+import StakeListComponent from "./StakeListComponent";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Stack from 'react-bootstrap/Stack';
+
 
 export default function StackingComponent({web3, accounts, contract}){
 	const formStakingCreation = useRef(null);
 	const [error,setError] = useState(null);
-	
+	const [stakedToken,setStakedToken] = useState("");
 
 	//Stake an amount of en ERC20 token
 	const registeringStaking = async () => {
@@ -40,6 +41,7 @@ export default function StackingComponent({web3, accounts, contract}){
 			
 			await contract.methods.stake(proposalToken,proposalAmount).send({from: accounts[0]})
 			.on("receipt",function(receipt){
+				setStakedToken(proposalToken);
 				formStakingCreation.current.token.value = "0x...";
 				formStakingCreation.current.amount.value = "";
 			})
@@ -55,21 +57,19 @@ export default function StackingComponent({web3, accounts, contract}){
 
 
 	return <>
-		<div className="container mt-4">
-			<Row>
+		{contract && <div className="container mt-4">
+			<Stack gap={4}>
 				{error && <AlertComponent>{error}</AlertComponent>}
-			</Row>
-			<Row>
-				<Col>
-					<CardComponent title="Stake your token" >
-						<Form ref={formStakingCreation}>
-							<FormField name="token" label="ERC20 Token :" placeholder="0x..." />
-							<FormField name="amount" label="Amount with decimals :" />
-						</Form>
-						<Button onClick={registeringStaking} type="submit" variant="secondary" size="sm"> Go </Button>
-					</CardComponent>
-				</Col>
-			</Row>
+				<CardComponent title="Stake your token" >
+					<Form ref={formStakingCreation}>
+						<FormField name="token" label="ERC20 Token :" placeholder="0x..." />
+						<FormField name="amount" label="Amount with decimals :" />
+					</Form>
+					<Button onClick={registeringStaking} type="submit" variant="secondary" size="sm"> Go </Button>
+				</CardComponent>
+				<StakeListComponent web3={web3} accounts={accounts} contract={contract} stakedToken={stakedToken} />
+			</Stack>
 		</div>
+		}
 	</>
 }

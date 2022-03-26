@@ -4,7 +4,6 @@ import myStackingDapp from "./contracts/myStackingDapp.json";
 import getWeb3 from "./utils/getWeb3";
 import Navigation from "./components/Navigation";
 import StackingComponent from "./components/StackingComponent";
-import StakeListComponent from "./components/StakeListComponent";
 import EventComponent from "./components/EventComponent";
 
 import Row from 'react-bootstrap/Row';
@@ -23,7 +22,7 @@ export default function App() {
     const [web3, setWeb3] = useState(null);
     const [accounts, setAccounts] = useState([""]);
     const [contract, setContract] = useState(null);
-	
+	const [tokenUpd, setTokenUpd] = useState(false);
 	
 	//Handler of connection
 	const handleConnect = useCallback (async function () {
@@ -67,7 +66,6 @@ export default function App() {
 		});
 	},[]);
 
-	
 /**
  * - Container fluid for the global look
  * - Navigation is our main navigation component for connect and print some global info for the user
@@ -80,7 +78,6 @@ export default function App() {
 			{/* <Navigation handleConnect={handleConnect} web3={web3} accounts={accounts} contract={contract} setStatus={setStatus} /> */}
 			<Container>
 				<Row><Col>{contract && <StackingComponent web3={web3} accounts={accounts} contract={contract} />}</Col></Row>
-				<Row><Col>{contract && <StakeListComponent web3={web3} accounts={accounts} contract={contract} />}</Col></Row>
 				<Row><EventComponent contract={contract} /></Row>
 			</Container>
 		</Container>
