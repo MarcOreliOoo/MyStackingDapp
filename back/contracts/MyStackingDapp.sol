@@ -146,7 +146,10 @@ contract myStackingDapp {
 		uint256 _rewardsInToken = stakes[_stakingToken][msg.sender].rewards;
 		if(stakes[_stakingToken][msg.sender].stakingAmount > 0) {
 			_rewardsInToken += calcRewardPerStake(_stakingToken, msg.sender);
+			//Update the timestamp
+			stakes[_stakingToken][msg.sender].updateTimestamp = block.timestamp;
 		}
+		
 		//Re entrancy rewards = 0;
 		stakes[_stakingToken][msg.sender].rewards = 0;
 		//Convert rewards here
@@ -160,7 +163,7 @@ contract myStackingDapp {
     function calcRewardPerStake(address _token, address _sender) public returns(uint) {
 		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * stakes[_token][_sender].stakingAmount / (totalTokenSupply[_token] * 100 );
 		//Update the timestamp
-		stakes[_token][_sender].updateTimestamp = block.timestamp;
+		//stakes[_token][_sender].updateTimestamp = block.timestamp;
         return _rewards;
     }
 	

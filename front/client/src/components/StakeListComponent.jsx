@@ -89,6 +89,7 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedO
 	const [totalTokenSupply, setTotalTokenSupply] = useState(0);
 	const [stake, setStake] = useState(null);
 	const [disable, setDisable] = useState(true);
+	const [rewardsToClaim,setRewardsToClaim] = useState(0);
 	
 
 	//Get the token name from ERC20
@@ -126,20 +127,23 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedO
 		})();
 	},[stakedOnly, stakedToken]);
 
-	//totalTokenSupply
+	
 
-	/* //Print rewards to claim
+	//Print rewards to claim
 	useEffect(function(){
-		(async function(){
+		const timer = window.setInterval(async function(){
 			if(address){
-				
-				//{stake.rewards}
-
-				setTokenName(_tokenName);
-				setTokenDecimals(_tokenDecimals);
+				const _rewardPerStake = await contract.methods.calcRewardPerStake(address,accounts[0]).call();
+				console.log(_rewardPerStake);
+				setRewardsToClaim(_rewardPerStake);
 			}
-		})();
-	},[]); */
+		},1000);
+
+		//A chaque fois qu'on a un timer, un abonnement à des événements etc. on doit gérer le clear immédiamement.
+		return function(){
+			clearInterval(timer);
+		};
+	},[]);
 
 
 	//Handle the unstake button (callback for the top component as we want an impact direct of the token list print)
@@ -172,19 +176,20 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedO
 
 	const startTs = timeSince(stake.startStakingTimestamp);
 	const updateTs = timeSince(stake.updateTimestamp);
+	let calc = stake.rewards + rewardsToClaim;
 	
-	//TODO get rewards to claimed
-	//TODO totalSupply of that tokken + tooltips for help
+	//TODO get rewards to claimed //TODO
+	//TODO tooltips for help
 	//TODO TVL
 	return <>
 		{(stake.staked || !stakedOnly) && <tr key={id}>
 		<td>{id}</td>
 		<td>{address}</td>
 		<td>{tokenName}</td>
-		<td>{stake.stakingAmount/10**tokenDecimals} / {totalTokenSupply/10**tokenDecimals}</td>
+		<td>{Math.floor(stake.stakingAmount/10**tokenDecimals)} / {Math.floor(totalTokenSupply/10**tokenDecimals)}</td>
 		<td>{stake.startStakingTimestamp == 0 ? "N/A" : startTs}</td>
 		<td>{stake.updateTimestamp == 0 ? "N/A" : updateTs}</td>
-		<td>{stake.rewards}</td>
+		<td>{calc}</td>
 		<td className="d-grid gap-3">
 			<Stack gap={3} direction="horizontal">
 				<Button className="ms-auto" onClick={handleUnstake} variant={disable?"secondary":"primary"} size="sm" disabled={disable}> Unstake </Button>

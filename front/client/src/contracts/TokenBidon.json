@@ -9669,15 +9669,15 @@
         1326
       ],
       "TokenBidon": [
-        2678
+        2679
       ]
     },
-    "id": 2679,
+    "id": 2680,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 2636,
+        "id": 2637,
         "literals": [
           "solidity",
           "0.8",
@@ -9689,10 +9689,10 @@
       {
         "absolutePath": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "file": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "id": 2637,
+        "id": 2638,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2679,
+        "scope": 2680,
         "sourceUnit": 1224,
         "src": "60:55:15",
         "symbolAliases": [],
@@ -9703,13 +9703,13 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 2638,
+              "id": 2639,
               "name": "ERC20",
               "nodeType": "IdentifierPath",
               "referencedDeclaration": 1223,
               "src": "142:5:15"
             },
-            "id": 2639,
+            "id": 2640,
             "nodeType": "InheritanceSpecifier",
             "src": "142:5:15"
           }
@@ -9718,9 +9718,9 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "id": 2678,
+        "id": 2679,
         "linearizedBaseContracts": [
-          2678,
+          2679,
           1223,
           1326,
           1301,
@@ -9732,7 +9732,7 @@
         "nodes": [
           {
             "body": {
-              "id": 2676,
+              "id": 2677,
               "nodeType": "Block",
               "src": "208:182:15",
               "statements": [
@@ -9741,7 +9741,7 @@
                     "arguments": [
                       {
                         "expression": {
-                          "id": 2649,
+                          "id": 2650,
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
@@ -9752,7 +9752,7 @@
                             "typeString": "msg"
                           }
                         },
-                        "id": 2650,
+                        "id": 2651,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -9770,17 +9770,17 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 2655,
+                        "id": 2656,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
-                          "id": 2651,
+                          "id": 2652,
                           "name": "_supply",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2641,
+                          "referencedDeclaration": 2642,
                           "src": "230:7:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -9794,14 +9794,14 @@
                             "typeIdentifier": "t_rational_1000000000000000000_by_1",
                             "typeString": "int_const 1000000000000000000"
                           },
-                          "id": 2654,
+                          "id": 2655,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "leftExpression": {
                             "hexValue": "3130",
-                            "id": 2652,
+                            "id": 2653,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -9819,7 +9819,7 @@
                           "operator": "**",
                           "rightExpression": {
                             "hexValue": "3138",
-                            "id": 2653,
+                            "id": 2654,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -9857,7 +9857,7 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 2648,
+                      "id": 2649,
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -9868,7 +9868,7 @@
                         "typeString": "function (address,uint256)"
                       }
                     },
-                    "id": 2656,
+                    "id": 2657,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -9883,7 +9883,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 2657,
+                  "id": 2658,
                   "nodeType": "ExpressionStatement",
                   "src": "213:32:15"
                 },
@@ -9892,7 +9892,7 @@
                     "arguments": [
                       {
                         "hexValue": "307836423930383437333242306632303966636136623535383145373837383938616261383142333737",
-                        "id": 2659,
+                        "id": 2660,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -9911,14 +9911,14 @@
                           "typeIdentifier": "t_rational_75000000000000000000000_by_1",
                           "typeString": "int_const 75000000000000000000000"
                         },
-                        "id": 2664,
+                        "id": 2665,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "lValueRequested": false,
                         "leftExpression": {
                           "hexValue": "3735303030",
-                          "id": 2660,
+                          "id": 2661,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -9939,14 +9939,14 @@
                             "typeIdentifier": "t_rational_1000000000000000000_by_1",
                             "typeString": "int_const 1000000000000000000"
                           },
-                          "id": 2663,
+                          "id": 2664,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "leftExpression": {
                             "hexValue": "3130",
-                            "id": 2661,
+                            "id": 2662,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -9964,7 +9964,7 @@
                           "operator": "**",
                           "rightExpression": {
                             "hexValue": "3138",
-                            "id": 2662,
+                            "id": 2663,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10002,7 +10002,7 @@
                           "typeString": "int_const 75000000000000000000000"
                         }
                       ],
-                      "id": 2658,
+                      "id": 2659,
                       "name": "transfer",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -10013,7 +10013,7 @@
                         "typeString": "function (address,uint256) returns (bool)"
                       }
                     },
-                    "id": 2665,
+                    "id": 2666,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -10028,7 +10028,7 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 2666,
+                  "id": 2667,
                   "nodeType": "ExpressionStatement",
                   "src": "250:65:15"
                 },
@@ -10037,7 +10037,7 @@
                     "arguments": [
                       {
                         "hexValue": "307833383736326644613339643332374637373264613664363661356242373132393339433643303836",
-                        "id": 2668,
+                        "id": 2669,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -10056,14 +10056,14 @@
                           "typeIdentifier": "t_rational_25000000000000000000000_by_1",
                           "typeString": "int_const 25000000000000000000000"
                         },
-                        "id": 2673,
+                        "id": 2674,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "lValueRequested": false,
                         "leftExpression": {
                           "hexValue": "3235303030",
-                          "id": 2669,
+                          "id": 2670,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -10084,14 +10084,14 @@
                             "typeIdentifier": "t_rational_1000000000000000000_by_1",
                             "typeString": "int_const 1000000000000000000"
                           },
-                          "id": 2672,
+                          "id": 2673,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "leftExpression": {
                             "hexValue": "3130",
-                            "id": 2670,
+                            "id": 2671,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10109,7 +10109,7 @@
                           "operator": "**",
                           "rightExpression": {
                             "hexValue": "3138",
-                            "id": 2671,
+                            "id": 2672,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10147,7 +10147,7 @@
                           "typeString": "int_const 25000000000000000000000"
                         }
                       ],
-                      "id": 2667,
+                      "id": 2668,
                       "name": "transfer",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -10158,7 +10158,7 @@
                         "typeString": "function (address,uint256) returns (bool)"
                       }
                     },
-                    "id": 2674,
+                    "id": 2675,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -10173,13 +10173,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 2675,
+                  "id": 2676,
                   "nodeType": "ExpressionStatement",
                   "src": "320:65:15"
                 }
               ]
             },
-            "id": 2677,
+            "id": 2678,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [
@@ -10187,7 +10187,7 @@
                 "arguments": [
                   {
                     "hexValue": "4269646f6e546f6b656e",
-                    "id": 2644,
+                    "id": 2645,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -10203,7 +10203,7 @@
                   },
                   {
                     "hexValue": "424944",
-                    "id": 2645,
+                    "id": 2646,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -10218,10 +10218,10 @@
                     "value": "BID"
                   }
                 ],
-                "id": 2646,
+                "id": 2647,
                 "kind": "baseConstructorSpecifier",
                 "modifierName": {
-                  "id": 2643,
+                  "id": 2644,
                   "name": "ERC20",
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 1223,
@@ -10235,17 +10235,17 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2642,
+              "id": 2643,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2641,
+                  "id": 2642,
                   "mutability": "mutable",
                   "name": "_supply",
                   "nameLocation": "172:7:15",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2677,
+                  "scope": 2678,
                   "src": "164:15:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -10254,7 +10254,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 2640,
+                    "id": 2641,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "164:7:15",
@@ -10269,19 +10269,19 @@
               "src": "163:17:15"
             },
             "returnParameters": {
-              "id": 2647,
+              "id": 2648,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "208:0:15"
             },
-            "scope": 2678,
+            "scope": 2679,
             "src": "152:238:15",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 2679,
+        "scope": 2680,
         "src": "119:278:15",
         "usedErrors": []
       }
@@ -10304,15 +10304,15 @@
         1326
       ],
       "TokenBidon": [
-        2678
+        2679
       ]
     },
-    "id": 2679,
+    "id": 2680,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 2636,
+        "id": 2637,
         "literals": [
           "solidity",
           "0.8",
@@ -10324,10 +10324,10 @@
       {
         "absolutePath": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "file": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "id": 2637,
+        "id": 2638,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2679,
+        "scope": 2680,
         "sourceUnit": 1224,
         "src": "60:55:15",
         "symbolAliases": [],
@@ -10338,13 +10338,13 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 2638,
+              "id": 2639,
               "name": "ERC20",
               "nodeType": "IdentifierPath",
               "referencedDeclaration": 1223,
               "src": "142:5:15"
             },
-            "id": 2639,
+            "id": 2640,
             "nodeType": "InheritanceSpecifier",
             "src": "142:5:15"
           }
@@ -10353,9 +10353,9 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "id": 2678,
+        "id": 2679,
         "linearizedBaseContracts": [
-          2678,
+          2679,
           1223,
           1326,
           1301,
@@ -10367,7 +10367,7 @@
         "nodes": [
           {
             "body": {
-              "id": 2676,
+              "id": 2677,
               "nodeType": "Block",
               "src": "208:182:15",
               "statements": [
@@ -10376,7 +10376,7 @@
                     "arguments": [
                       {
                         "expression": {
-                          "id": 2649,
+                          "id": 2650,
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
@@ -10387,7 +10387,7 @@
                             "typeString": "msg"
                           }
                         },
-                        "id": 2650,
+                        "id": 2651,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -10405,17 +10405,17 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 2655,
+                        "id": 2656,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
-                          "id": 2651,
+                          "id": 2652,
                           "name": "_supply",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2641,
+                          "referencedDeclaration": 2642,
                           "src": "230:7:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -10429,14 +10429,14 @@
                             "typeIdentifier": "t_rational_1000000000000000000_by_1",
                             "typeString": "int_const 1000000000000000000"
                           },
-                          "id": 2654,
+                          "id": 2655,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "leftExpression": {
                             "hexValue": "3130",
-                            "id": 2652,
+                            "id": 2653,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10454,7 +10454,7 @@
                           "operator": "**",
                           "rightExpression": {
                             "hexValue": "3138",
-                            "id": 2653,
+                            "id": 2654,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10492,7 +10492,7 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 2648,
+                      "id": 2649,
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -10503,7 +10503,7 @@
                         "typeString": "function (address,uint256)"
                       }
                     },
-                    "id": 2656,
+                    "id": 2657,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -10518,7 +10518,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 2657,
+                  "id": 2658,
                   "nodeType": "ExpressionStatement",
                   "src": "213:32:15"
                 },
@@ -10527,7 +10527,7 @@
                     "arguments": [
                       {
                         "hexValue": "307836423930383437333242306632303966636136623535383145373837383938616261383142333737",
-                        "id": 2659,
+                        "id": 2660,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -10546,14 +10546,14 @@
                           "typeIdentifier": "t_rational_75000000000000000000000_by_1",
                           "typeString": "int_const 75000000000000000000000"
                         },
-                        "id": 2664,
+                        "id": 2665,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "lValueRequested": false,
                         "leftExpression": {
                           "hexValue": "3735303030",
-                          "id": 2660,
+                          "id": 2661,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -10574,14 +10574,14 @@
                             "typeIdentifier": "t_rational_1000000000000000000_by_1",
                             "typeString": "int_const 1000000000000000000"
                           },
-                          "id": 2663,
+                          "id": 2664,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "leftExpression": {
                             "hexValue": "3130",
-                            "id": 2661,
+                            "id": 2662,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10599,7 +10599,7 @@
                           "operator": "**",
                           "rightExpression": {
                             "hexValue": "3138",
-                            "id": 2662,
+                            "id": 2663,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10637,7 +10637,7 @@
                           "typeString": "int_const 75000000000000000000000"
                         }
                       ],
-                      "id": 2658,
+                      "id": 2659,
                       "name": "transfer",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -10648,7 +10648,7 @@
                         "typeString": "function (address,uint256) returns (bool)"
                       }
                     },
-                    "id": 2665,
+                    "id": 2666,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -10663,7 +10663,7 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 2666,
+                  "id": 2667,
                   "nodeType": "ExpressionStatement",
                   "src": "250:65:15"
                 },
@@ -10672,7 +10672,7 @@
                     "arguments": [
                       {
                         "hexValue": "307833383736326644613339643332374637373264613664363661356242373132393339433643303836",
-                        "id": 2668,
+                        "id": 2669,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -10691,14 +10691,14 @@
                           "typeIdentifier": "t_rational_25000000000000000000000_by_1",
                           "typeString": "int_const 25000000000000000000000"
                         },
-                        "id": 2673,
+                        "id": 2674,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "lValueRequested": false,
                         "leftExpression": {
                           "hexValue": "3235303030",
-                          "id": 2669,
+                          "id": 2670,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -10719,14 +10719,14 @@
                             "typeIdentifier": "t_rational_1000000000000000000_by_1",
                             "typeString": "int_const 1000000000000000000"
                           },
-                          "id": 2672,
+                          "id": 2673,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "leftExpression": {
                             "hexValue": "3130",
-                            "id": 2670,
+                            "id": 2671,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10744,7 +10744,7 @@
                           "operator": "**",
                           "rightExpression": {
                             "hexValue": "3138",
-                            "id": 2671,
+                            "id": 2672,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": true,
@@ -10782,7 +10782,7 @@
                           "typeString": "int_const 25000000000000000000000"
                         }
                       ],
-                      "id": 2667,
+                      "id": 2668,
                       "name": "transfer",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -10793,7 +10793,7 @@
                         "typeString": "function (address,uint256) returns (bool)"
                       }
                     },
-                    "id": 2674,
+                    "id": 2675,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -10808,13 +10808,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 2675,
+                  "id": 2676,
                   "nodeType": "ExpressionStatement",
                   "src": "320:65:15"
                 }
               ]
             },
-            "id": 2677,
+            "id": 2678,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [
@@ -10822,7 +10822,7 @@
                 "arguments": [
                   {
                     "hexValue": "4269646f6e546f6b656e",
-                    "id": 2644,
+                    "id": 2645,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -10838,7 +10838,7 @@
                   },
                   {
                     "hexValue": "424944",
-                    "id": 2645,
+                    "id": 2646,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -10853,10 +10853,10 @@
                     "value": "BID"
                   }
                 ],
-                "id": 2646,
+                "id": 2647,
                 "kind": "baseConstructorSpecifier",
                 "modifierName": {
-                  "id": 2643,
+                  "id": 2644,
                   "name": "ERC20",
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 1223,
@@ -10870,17 +10870,17 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2642,
+              "id": 2643,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2641,
+                  "id": 2642,
                   "mutability": "mutable",
                   "name": "_supply",
                   "nameLocation": "172:7:15",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2677,
+                  "scope": 2678,
                   "src": "164:15:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -10889,7 +10889,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 2640,
+                    "id": 2641,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "164:7:15",
@@ -10904,19 +10904,19 @@
               "src": "163:17:15"
             },
             "returnParameters": {
-              "id": 2647,
+              "id": 2648,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "208:0:15"
             },
-            "scope": 2678,
+            "scope": 2679,
             "src": "152:238:15",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 2679,
+        "scope": 2680,
         "src": "119:278:15",
         "usedErrors": []
       }
@@ -10929,7 +10929,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-03-25T14:43:18.646Z",
+  "updatedAt": "2022-03-26T14:12:08.651Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
