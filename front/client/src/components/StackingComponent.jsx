@@ -60,7 +60,7 @@ export default function StackingComponent({web3, accounts, contract}){
 		{contract && <div className="container mt-4">
 			<Stack gap={4}>
 				{error && <AlertComponent>{error}</AlertComponent>}
-				<CardComponent title="Stake your token" >
+				<CardComponent title="(Re)Stake your token" >
 					<Form ref={formStakingCreation}>
 						<FormField name="token" label="ERC20 Token :" placeholder="0x..." />
 						<FormField name="amount" label="Amount with decimals :" />

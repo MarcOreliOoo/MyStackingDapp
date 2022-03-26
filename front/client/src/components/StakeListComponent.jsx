@@ -3,17 +3,16 @@ import ERC20 from "../contracts/ERC20.json";
 import Card from "react-bootstrap/Card";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
-import time from "../utils/time";
+import timeSince from "../utils/timeSince";
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export default function StakeListComponent({web3, accounts, contract, stakedToken}){
 	const [loading, setLoading] = useState(true); //By default is loading
 	const [tokenList, setTokenList] = useState([]);
-	const [allStakesVisible,toggleStakes] = useToggle();
+	const [stakedOnly,toggleStakedOnly] = useToggle();
 	const [unstakedToken, setUnstakedToken] = useState("");
 
 	useEffect(function(){
@@ -26,7 +25,7 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 				setLoading(false);
 			}
 		})();
-	},[stakedToken,unstakedToken, allStakesVisible]);
+	},[stakedToken, unstakedToken]);
 
 	const unstakeToken = async (address) =>{
 		await contract.methods.unstake(address).send({from: accounts[0]})
@@ -39,7 +38,7 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 			});
 	};
 	
-	if (loading){//|| tokenList.length==0
+	if (loading){
 		return <></>;
 	}
 	return <>
@@ -47,7 +46,7 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 			<Card.Header >
 				<Stack gap={2} direction="horizontal">
 					<div className="me-auto h5">Staking</div>
-					<Form><Form.Check type="switch" id="custom-switch" label="Staked only" onChange={toggleStakes} checked={allStakesVisible}/></Form>
+					<Form><Form.Check type="switch" id="custom-switch" label="Staked only" onChange={toggleStakedOnly} checked={stakedOnly}/></Form>
 				</Stack>
 			</Card.Header>
 			<Card.Body>
@@ -58,17 +57,15 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 						<th>Token Address</th>
 						<th>Token Name</th>
 						<th>Quantity</th>
-						<th>Since</th>
+						<th>First deposit</th>
 						<th>Last update</th>
-						<th>Rewards stocked</th>
+						<th>Rewards to claim</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
 					{tokenList.map(t => 
-						<tr key={tokenList.indexOf(t)}>
-							<Stake web3={web3} accounts={accounts} contract={contract} id={tokenList.indexOf(t)} address={t} setUnstakedToken={unstakeToken} allStakesVisible={allStakesVisible} />
-						</tr>
+						<Stake web3={web3} accounts={accounts} contract={contract} id={tokenList.indexOf(t)} address={t} setUnstakedToken={unstakeToken} stakedOnly={stakedOnly} stakedToken={stakedToken}/>
 					)}
 				</tbody>
 				</Table>
@@ -81,17 +78,18 @@ function useToggle(initialValue = true){
 	const [value,setValue] = useState(initialValue);
 	const toggle = function () {
 		setValue(v => !v);
-		console.log(value);
 	}
 	return [value,toggle];
 }
 
 
-function Stake({web3, id, address, accounts, contract, setUnstakedToken, allStakesVisible}){
+function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedOnly, stakedToken}){
 	const [tokenName, setTokenName] = useState("");
 	const [tokenDecimals, setTokenDecimals] = useState("");
+	const [totalTokenSupply, setTotalTokenSupply] = useState(0);
 	const [stake, setStake] = useState(null);
 	const [disable, setDisable] = useState(true);
+	
 
 	//Get the token name from ERC20
 	useEffect(function(){
@@ -100,30 +98,51 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, allStak
 				const token = new web3.eth.Contract(ERC20.abi, address);
 				const _tokenName = await token.methods.name().call();
 				const _tokenDecimals = await token.methods.decimals().call();
+				const _totalTokenSupply = await contract.methods.totalTokenSupply(address).call();
 				setTokenName(_tokenName);
 				setTokenDecimals(_tokenDecimals);
+				setTotalTokenSupply(_totalTokenSupply);
 			}
 		})();
-	},[]);
+	},[stakedOnly, stakedToken]);
 
 	//Get the Stake struct from SC
 	useEffect(function(){
 		(async function(){
 			if(address){
 				const _stake = await contract.methods.stakes(address,accounts[0]).call();
-				if(_stake.staked || _stake.rewards > 0 || !allStakesVisible){
+				//By default print only staked token
+				if(_stake.staked || _stake.rewards > 0){ 
 					setStake(_stake);
 					setDisable(false);
+					console.log(_stake);
+				//But you could want to see others possibilities
+				} else if (!stakedOnly){
+					setStake(_stake);
+					setDisable(true);
 					console.log(_stake);
 				}
 			}
 		})();
-	},[allStakesVisible]);
+	},[stakedOnly, stakedToken]);
 
-	const handleRestake = async function(e){
-		e.preventDefault();
-	}
+	//totalTokenSupply
 
+	/* //Print rewards to claim
+	useEffect(function(){
+		(async function(){
+			if(address){
+				
+				//{stake.rewards}
+
+				setTokenName(_tokenName);
+				setTokenDecimals(_tokenDecimals);
+			}
+		})();
+	},[]); */
+
+
+	//Handle the unstake button (callback for the top component as we want an impact direct of the token list print)
 	const handleUnstake = async function(e){
 		e.preventDefault();
 		if(stake.stakingAmount > 0){
@@ -131,6 +150,7 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, allStak
 		}
 	};
 
+	//Handle the get rewards button
 	const handleRewards = async () => {
 		if(stake.stakingAmount > 0){
 			await contract.methods.getReward(address).send({from: accounts[0]})
@@ -146,22 +166,33 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, allStak
 	if(stake == null){
 		return <></>
 	}
-	//TODO timeSince and time doesnt work
+
+
+	
+
+	const startTs = timeSince(stake.startStakingTimestamp);
+	const updateTs = timeSince(stake.updateTimestamp);
+	
+	//TODO get rewards to claimed
+	//TODO totalSupply of that tokken + tooltips for help
+	//TODO TVL
 	return <>
+		{(stake.staked || !stakedOnly) && <tr key={id}>
 		<td>{id}</td>
 		<td>{address}</td>
 		<td>{tokenName}</td>
-		<td>{stake.stakingAmount/10**tokenDecimals}</td>
-		<td>{time(stake.startStakingTimestamp)}</td>
-		<td>{time(stake.updateTimestamp)}</td>
+		<td>{stake.stakingAmount/10**tokenDecimals} / {totalTokenSupply/10**tokenDecimals}</td>
+		<td>{stake.startStakingTimestamp == 0 ? "N/A" : startTs}</td>
+		<td>{stake.updateTimestamp == 0 ? "N/A" : updateTs}</td>
 		<td>{stake.rewards}</td>
-		<td className="d-grid gap-4">
-			<ButtonGroup size="sm">
-				<Button onClick={handleRestake} variant="primary" size="sm"> Stake more </Button>
-				<Button onClick={handleUnstake} variant={disable?"secondary":"primary"} size="sm" disabled={disable}> Unstake </Button>
-				<Button onClick={handleRewards} variant={disable?"secondary":"primary"} size="sm" disabled={disable}> Get rewards </Button>
-			</ButtonGroup>
+		<td className="d-grid gap-3">
+			<Stack gap={3} direction="horizontal">
+				<Button className="ms-auto" onClick={handleUnstake} variant={disable?"secondary":"primary"} size="sm" disabled={disable}> Unstake </Button>
+				<div className="vr" />
+				<Button className="me-auto" onClick={handleRewards} variant={disable?"secondary":"primary"} size="sm" disabled={disable}> Get rewards </Button>
+			</Stack>
 		</td>
+	</tr>
+	}
 	</>
 }
-
