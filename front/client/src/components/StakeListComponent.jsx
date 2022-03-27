@@ -9,13 +9,13 @@ import timeSince from "../utils/timeSince";
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-export default function StakeListComponent({web3, accounts, contract, stakedToken}){
+export default function StakeListComponent({web3, accounts, contract, stakedToken, setTotalValueLocked}){
 	const [loading, setLoading] = useState(true); //By default is loading
 	const [tokenList, setTokenList] = useState([]);
 	const [stakedOnly,toggleStakedOnly] = useToggle();
 	const [unstakedToken, setUnstakedToken] = useState("");
 	const [rewardedToken, setRewardedToken] = useState("");
-	const [totalValueLocked, setTotalValueLocked] = useState(0);
+	
 
 	//Get the token list
 	useEffect(function(){
@@ -47,7 +47,6 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 					price = parseInt(await contract.methods.getPriceOfToken(tokenList[i]).call(),10);
 					totalValueLocked += totalSup * price / 10 ** tokenDecimals;
 				}
-				console.log(totalValueLocked);
 				setTotalValueLocked(totalValueLocked);
 			}
 		})();
@@ -221,7 +220,6 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, unstake
 	let calc = parseInt(stake.rewards,10) + rewardsToClaim;
 	
 	//TODO tooltips for help
-	//TODO TVL
 	return <>
 		{(stake.staked || !stakedOnly) && <tr key={id}>
 		<td>{id}</td>

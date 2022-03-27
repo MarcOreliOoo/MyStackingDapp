@@ -6,6 +6,7 @@ import Navigation from "./components/Navigation";
 import StackingComponent from "./components/StackingComponent";
 import EventComponent from "./components/EventComponent";
 
+
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -78,7 +79,7 @@ export default function App() {
 			{/* <Navigation handleConnect={handleConnect} web3={web3} accounts={accounts} contract={contract} setStatus={setStatus} /> */}
 			<Container>
 				<Row><Col>{contract && <StackingComponent web3={web3} accounts={accounts} contract={contract} />}</Col></Row>
-				<Row><EventComponent contract={contract} /></Row>
+				<Row><Col><EventComponent contract={contract} /></Col></Row>
 			</Container>
 		</Container>
 	);
