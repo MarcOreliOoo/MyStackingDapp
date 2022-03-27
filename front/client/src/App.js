@@ -76,10 +76,9 @@ export default function App() {
 	return (
 		<Container fluid>
 			<Navigation handleConnect={handleConnect} web3={web3} accounts={accounts} contract={contract} />
-			{/* <Navigation handleConnect={handleConnect} web3={web3} accounts={accounts} contract={contract} setStatus={setStatus} /> */}
+			<EventComponent contract={contract} />
 			<Container>
-				<Row><Col>{contract && <StackingComponent web3={web3} accounts={accounts} contract={contract} />}</Col></Row>
-				<Row><Col><EventComponent contract={contract} /></Col></Row>
+				{contract && <StackingComponent web3={web3} accounts={accounts} contract={contract} />}
 			</Container>
 		</Container>
 	);

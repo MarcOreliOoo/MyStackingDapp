@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
-
+import addressFormatHelper from '../utils/addressFormatHelper';
 
 export default function Navigation({handleConnect, web3, accounts, contract}){
 	const [aalTokenContract,setAalTokenContract] = useState("");
@@ -32,7 +32,7 @@ export default function Navigation({handleConnect, web3, accounts, contract}){
 				</Nav>
 				<Nav className="ms-auto" >
 					<Navbar.Text >
-						Connected with : {accounts[0].substr(0,5)+" ... "+accounts[0].substr(accounts[0].length - 4)}
+						Connected with : {addressFormatHelper(accounts[0])}
 					</Navbar.Text>
 				</Nav>
 			</Navbar.Collapse>
