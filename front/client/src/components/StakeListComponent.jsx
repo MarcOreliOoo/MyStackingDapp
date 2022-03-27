@@ -14,6 +14,7 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 	const [tokenList, setTokenList] = useState([]);
 	const [stakedOnly,toggleStakedOnly] = useToggle();
 	const [unstakedToken, setUnstakedToken] = useState("");
+	const [rewardedToken, setRewardedToken] = useState("");
 
 	useEffect(function(){
 		(async function(){
@@ -37,6 +38,18 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 				console.log(error);
 			});
 	};
+
+	const rewardeToken = async (address) => {
+		await contract.methods.getReward(address).send({from: accounts[0]})
+		.on("receipt",function(receipt){
+			setRewardedToken(address);
+			console.log(receipt);
+		})
+		.on("error",function(error){
+			console.log(error);
+		});
+	}
+	
 	
 	if (loading){
 		return <></>;
@@ -65,7 +78,7 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 				</thead>
 				<tbody>
 					{tokenList.map(t => 
-						<Stake web3={web3} accounts={accounts} contract={contract} id={tokenList.indexOf(t)} address={t} setUnstakedToken={unstakeToken} stakedOnly={stakedOnly} stakedToken={stakedToken}/>
+						<Stake web3={web3} accounts={accounts} contract={contract} id={tokenList.indexOf(t)} address={t} setUnstakedToken={unstakeToken} unstakedToken={unstakedToken} stakedOnly={stakedOnly} stakedToken={stakedToken} setGetRewardedToken={rewardeToken} rewardedToken={rewardedToken} />
 					)}
 				</tbody>
 				</Table>
@@ -83,7 +96,7 @@ function useToggle(initialValue = true){
 }
 
 
-function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedOnly, stakedToken}){
+function Stake({web3, id, address, accounts, contract, setUnstakedToken, unstakedToken, stakedOnly, stakedToken, setGetRewardedToken, rewardedToken}){
 	const [tokenName, setTokenName] = useState("");
 	const [tokenDecimals, setTokenDecimals] = useState("");
 	const [totalTokenSupply, setTotalTokenSupply] = useState(0);
@@ -125,7 +138,7 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedO
 				}
 			}
 		})();
-	},[stakedOnly, stakedToken]);
+	},[stakedOnly, stakedToken, rewardedToken]);
 
 	
 
@@ -133,8 +146,9 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedO
 	useEffect(function(){
 		const timer = window.setInterval(async function(){
 			if(address){
-				const _rewardPerStake = await contract.methods.calcRewardPerStake(address,accounts[0]).call();
+				const _rewardPerStake = parseInt(await contract.methods.calcRewardPerStake(address,accounts[0]).call(),10);
 				console.log(_rewardPerStake);
+
 				setRewardsToClaim(_rewardPerStake);
 			}
 		},1000);
@@ -155,15 +169,10 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedO
 	};
 
 	//Handle the get rewards button
-	const handleRewards = async () => {
+	const handleRewards = async (e) => {
+		e.preventDefault();
 		if(stake.stakingAmount > 0){
-			await contract.methods.getReward(address).send({from: accounts[0]})
-			.on("receipt",function(receipt){
-				console.log(receipt);
-			})
-			.on("error",function(error){
-				console.log(error);
-			});
+			await setGetRewardedToken(address);
 		}
 	};
 
@@ -172,13 +181,10 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, stakedO
 	}
 
 
-	
-
 	const startTs = timeSince(stake.startStakingTimestamp);
 	const updateTs = timeSince(stake.updateTimestamp);
-	let calc = stake.rewards + rewardsToClaim;
+	let calc = parseInt(stake.rewards,10) + rewardsToClaim;
 	
-	//TODO get rewards to claimed //TODO
 	//TODO tooltips for help
 	//TODO TVL
 	return <>
