@@ -19,7 +19,9 @@ export default function Navigation({handleConnect, web3, accounts, contract}){
 
 	return <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
 		<Container>
-		<Navbar.Brand href="#home">My Stacking Dapp</Navbar.Brand>
+		<Navbar.Brand href="#home">
+			<img src="../../favicon.ico" width="32" height="32" className="d-inline-block align-top" alt="AAL app logo"/>{' '}My Stacking Dapp
+	  	</Navbar.Brand>
 		<Navbar.Toggle aria-controls="responsive-navbar-nav" />
 		{web3===null ? <button className="btn btn-primary ms-auto" onClick={handleConnect}>Connect</button> :
 			<Navbar.Collapse id="responsive-navbar-nav">

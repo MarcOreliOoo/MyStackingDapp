@@ -15,7 +15,9 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 	const [stakedOnly,toggleStakedOnly] = useToggle();
 	const [unstakedToken, setUnstakedToken] = useState("");
 	const [rewardedToken, setRewardedToken] = useState("");
+	const [totalValueLocked, setTotalValueLocked] = useState(0);
 
+	//Get the token list
 	useEffect(function(){
 		(async function(){
 			if(contract){
@@ -28,6 +30,31 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 		})();
 	},[stakedToken, unstakedToken]);
 
+
+	//Get the TVL of the contract
+	useEffect(function(){
+		(async function(){
+			if(contract && tokenList.length>0){
+				let totalValueLocked = 0;
+				let totalSup;
+				let price;
+				let token; 
+				let tokenDecimals;
+				for(let i=0;i<tokenList.length;i++){
+					token = new web3.eth.Contract(ERC20.abi, tokenList[i]);
+					tokenDecimals = await token.methods.decimals().call();
+					totalSup = parseInt(await contract.methods.totalTokenSupply(tokenList[i]).call(),10);
+					price = parseInt(await contract.methods.getPriceOfToken(tokenList[i]).call(),10);
+					totalValueLocked += totalSup * price / 10 ** tokenDecimals;
+				}
+				console.log(totalValueLocked);
+				setTotalValueLocked(totalValueLocked);
+			}
+		})();
+	},[tokenList]);
+
+
+	//Deal with the unstake button
 	const unstakeToken = async (address) =>{
 		await contract.methods.unstake(address).send({from: accounts[0]})
 			.on("receipt",function(receipt){
@@ -39,6 +66,8 @@ export default function StakeListComponent({web3, accounts, contract, stakedToke
 			});
 	};
 
+
+	//Deal with the get rewards button
 	const rewardeToken = async (address) => {
 		await contract.methods.getReward(address).send({from: accounts[0]})
 		.on("receipt",function(receipt){
@@ -103,7 +132,7 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, unstake
 	const [stake, setStake] = useState(null);
 	const [disable, setDisable] = useState(true);
 	const [rewardsToClaim,setRewardsToClaim] = useState(0);
-	
+	const [rewardRate,setRewardRate] = useState(0);
 
 	//Get the token name from ERC20
 	useEffect(function(){
@@ -140,24 +169,30 @@ function Stake({web3, id, address, accounts, contract, setUnstakedToken, unstake
 		})();
 	},[stakedOnly, stakedToken, rewardedToken]);
 
-	
+	//Get the static immutable reward rate from contract
+	useEffect(function(){
+		(async function(){
+			if(contract){
+				const _dailyRewardRate = parseInt(await contract.methods.DAILY_REWARD_RATE().call(),10);
+				setRewardRate(_dailyRewardRate);
+			}
+		})();
+	},[]);
 
-	//Print rewards to claim
+	//Print dynamicly fields like "rewards to claim" or "since" timer
 	useEffect(function(){
 		const timer = window.setInterval(async function(){
-			if(address){
-				const _rewardPerStake = parseInt(await contract.methods.calcRewardPerStake(address,accounts[0]).call(),10);
-				console.log(_rewardPerStake);
-
+			if(address && stake && rewardRate){
+				//DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * stakes[_token][_sender].stakingAmount / (totalTokenSupply[_token] * 100 );
+				const _rewardPerStake = Math.round(100*(rewardRate * (Date.now()/1000 - stake.updateTimestamp) * stake.stakingAmount / (totalTokenSupply * 100)))/100;
 				setRewardsToClaim(_rewardPerStake);
 			}
 		},1000);
-
 		//A chaque fois qu'on a un timer, un abonnement à des événements etc. on doit gérer le clear immédiamement.
 		return function(){
 			clearInterval(timer);
 		};
-	},[]);
+	},[stake, rewardRate, totalTokenSupply]);
 
 
 	//Handle the unstake button (callback for the top component as we want an impact direct of the token list print)

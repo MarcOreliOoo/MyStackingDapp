@@ -160,7 +160,7 @@ contract myStackingDapp {
     }
 
 	//Get the rewards in "staked token" : rewardRate/100 * staking period * share of the pool at updateTime
-    function calcRewardPerStake(address _token, address _sender) public returns(uint) {
+    function calcRewardPerStake(address _token, address _sender) view internal returns(uint) {
 		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * stakes[_token][_sender].stakingAmount / (totalTokenSupply[_token] * 100 );
 		//Update the timestamp
 		//stakes[_token][_sender].updateTimestamp = block.timestamp;
