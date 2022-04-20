@@ -1,192 +1,241 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "./AALToken.sol";
-import "./TokenBidon.sol";
-import "./PriceConsumer.sol";
+//["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2"],[100,100],2
+//1000000000000000000
 
-contract myStackingDapp {
+contract SharedWallet{
 
-	//Stake struct with token staked
-	struct Stake {
-		uint256 stakingAmount;
-		uint256 startStakingTimestamp;
-		uint256 updateTimestamp;
-		uint256 rewards;
-		bool staked;
-	}
-
-	//Token rewarded for staking
-	AALToken public rewardsToken;
-	TokenBidon public stackingToken;
-	PriceConsumer public priceConsumer;
-	uint8 public immutable DAILY_REWARD_RATE = 2;
-
-
-	//Mapping of : Stake per User per Token staked
-	// Token A => User A => Stake 1
-	// Token A => User B => Stake 2
-	// Token B => User A => Stake 3
-	mapping(address => mapping(address => Stake)) public stakes;
-
-	//TotalSupplyOfToken per token address
-	mapping(address => uint256) public totalTokenSupply;
-
-	//Id token of the list of token
-	mapping(address => uint256) public idTokenOfListOfToken;
-
-	//Helpers
-	address[] public listOfStaker;
-	address[] public listOfToken;
-
-
-	/* ============= EVENT ============= */
-
-	event Staking(address stakerAddress, uint256 amountToStake, address stakingToken);
-    event Unstaking(address stakerAddress, uint256 amountToUnstake, address stakingToken);
-	event Rewarding(address stakerAddress, uint256 rewards, address stakingToken);
-	event Log(string message);
-
+	//List of owners of the contract, only those can call some of the functions
+	address[] public owners; 
+	mapping(address => bool) public isOwner;
+	uint8 public confirmationNeeded;
 	
-	/* ============= MODIFIER ============= */
+	uint256 public totalShares; //Total of shares 
+	uint256 public totalAlreadyWithdrawed; //Total of ethers already withdrawed
+	
+	mapping(address => uint256) public sharePerUser; //Share per user
+	mapping(address => uint256) public withdrawPerUser; //Amount of withdrawed ethers per user
 
-	modifier amountStrictPositiv(uint256 _amount){
-		require(_amount > 0,"Amount <= 0");
-		_;
+    mapping(address => uint256) public erc20AmountBought; //Amount per ERC20 bought
+    mapping(address => uint256) public erc721AmountBought; //Amount per ERC721 NFT Bought;
+    //Todo buy theses token types
+
+
+	//Todo : Emit event multiWallet built
+	constructor(address[] memory _owners, uint256[] memory _shares, uint8 _confirmationNeeded){
+		require(_owners.length == _shares.length, "owners and shares length mismatch");
+		require(_owners.length > 0, "owners required");
+		require(_confirmationNeeded > 0 && _confirmationNeeded <= _owners.length, "confirmation number invalid");
+		
+		for(uint i;i<_owners.length; i++){
+			require(_owners[i] != address(0),"owner is address(0)");
+			require(!isOwner[_owners[i]],"owner is already listed");
+			require(_shares[i] > 0,"share is <= 0");
+			
+			owners.push(_owners[i]);
+			isOwner[_owners[i]] = true;
+			sharePerUser[_owners[i]] = _shares[i];
+			totalShares += _shares[i];			
+		}
+		confirmationNeeded = _confirmationNeeded;
 	}
 
-	modifier stakerExist(address _token, address _sender){
-		require(stakes[_token][_sender].staked || stakes[_token][_sender].rewards > 0,"Not a staker or no rewards");
-		_;
+	//Todo : Emit event receive Eth
+	//Owners can send ethers, a contract, a sell can send ethers...
+	receive() external payable {}
+
+	//Todo : Emit event withdrawal
+	//Todo : To Test 
+	function withdraw() public {
+		require(isOwner[msg.sender],"not an owner");
+	
+		uint256 toPay = ((address(this).balance + totalAlreadyWithdrawed) * sharePerUser[msg.sender]) / totalShares - withdrawPerUser[msg.sender];
+		require(toPay>0,"Nothing to pay");
+
+		totalAlreadyWithdrawed += toPay;
+		withdrawPerUser[msg.sender] += toPay;
+
+		(bool success,) = payable(msg.sender).call{value:toPay}("");
+		require(success,"transaction failed");
 	}
 
-    //TODO change PriceConsumer in function of network
-	//TODO delete TokenBin once testing ends
+
+	/* ========== HELPERS ========== */
+	function getBalance() external view returns (uint) {
+		return address(this).balance;
+	}
+
+
+}
+
+contract EtherWallet {
+	address payable public owner;
+
 	constructor() {
-		rewardsToken = new AALToken();
-		priceConsumer = new PriceConsumer(0xAa7F6f7f507457a1EE157fE97F6c7DB2BEec5cD0);
-		stackingToken = new TokenBidon(100000);
-		listOfToken.push();
+		owner = payable(msg.sender);
 	}
 
+	receive() external payable {}
 
-    /* ============= STAKE ============= */
-
-	function stake(address _stakingToken, uint256 _amountToStake) public amountStrictPositiv(_amountToStake) {
-		
-		//Check allowance of the token IERC20 the user will stake
-        require(IERC20(_stakingToken).allowance(msg.sender, address(this)) >= _amountToStake, "Check the token allowance");
-
-        if(!stakes[_stakingToken][msg.sender].staked){
-			//If this stake does not exist : Create the Stake struct in the Stake per User per Token mapping
-			uint256 ts = block.timestamp;
-			stakes[_stakingToken][msg.sender] = Stake(_amountToStake, ts, ts, 0, true);
-			//And push that new staker
-			listOfStaker.push(msg.sender);
-
-			//If this id is > 0 then it already exist in the list
-			if(idTokenOfListOfToken[_stakingToken] <= 0){
-				listOfToken.push(_stakingToken);
-				idTokenOfListOfToken[_stakingToken] = listOfToken.length-1;
-			}
-		} else {
-			//If this stake already exists : Compute previous reward, update the timestamp and the amount
-			stakes[_stakingToken][msg.sender].rewards += calcRewardPerStake(_stakingToken,msg.sender);
-			stakes[_stakingToken][msg.sender].stakingAmount += _amountToStake;
-			stakes[_stakingToken][msg.sender].updateTimestamp = block.timestamp;
-		}
-		
-        //The total supply of that token increases of _amountToStake
-		totalTokenSupply[_stakingToken] += _amountToStake;
-
-        //Transfer from user's wallet to this contract of _amountToStake
-        IERC20(_stakingToken).transferFrom(msg.sender,address(this),_amountToStake);
-
-		emit Staking(msg.sender,_amountToStake,_stakingToken);
+	function withdraw(uint _amount) external {
+		require(msg.sender == owner, "caller is not owner");
+		payable(msg.sender).transfer(_amount);
 	}
 
+	function getBalance() external view returns (uint) {
+		return address(this).balance;
+	}
+}
 
-	/* ============= UNSTAKE ============= */
-    
-	function unstake(address _stakingToken) public stakerExist(_stakingToken,msg.sender){
-		
-		//Calc and get rewards
-		getReward(_stakingToken);
-		
-		//Re entrancy amount = 0
-		uint256 _amountToUnstake = stakes[_stakingToken][msg.sender].stakingAmount;
-		
-		//Update of the total supply of that _stakingToken and delete from array if necessary
-        totalTokenSupply[_stakingToken] -= _amountToUnstake;
-		if(totalTokenSupply[_stakingToken] <= 0){
-			delete listOfToken[idTokenOfListOfToken[_stakingToken]];
-			delete idTokenOfListOfToken[_stakingToken];
+contract MultiSigWallet {
+	event Deposit(address indexed sender, uint amount, uint balance);
+	event SubmitTransaction(address indexed owner, uint indexed txIndex, address indexed to, uint value, bytes data);
+	event ConfirmTransaction(address indexed owner, uint indexed txIndex);
+	event RevokeConfirmation(address indexed owner, uint indexed txIndex);
+	event ExecuteTransaction(address indexed owner, uint indexed txIndex);
+
+	address[] public owners;
+	mapping(address => bool) public isOwner;
+	uint public numConfirmationsRequired;
+
+	struct Transaction {
+		address to;
+		uint value;
+		bytes data;
+		bool executed;
+		uint numConfirmations;
+	}
+
+	// mapping from tx index => owner => bool
+	mapping(uint => mapping(address => bool)) public isConfirmed;
+
+	Transaction[] public transactions;
+
+	modifier onlyOwner() {
+		require(isOwner[msg.sender], "not owner");
+		_;
+	}
+
+	modifier txExists(uint _txIndex) {
+		require(_txIndex < transactions.length, "tx does not exist");
+		_;
+	}
+
+	modifier notExecuted(uint _txIndex) {
+		require(!transactions[_txIndex].executed, "tx already executed");
+		_;
+	}
+
+	modifier notConfirmed(uint _txIndex) {
+		require(!isConfirmed[_txIndex][msg.sender], "tx already confirmed");
+		_;
+	}
+
+	constructor(address[] memory _owners, uint _numConfirmationsRequired) {
+		require(_owners.length > 0, "owners required");
+		require(_numConfirmationsRequired > 0 && _numConfirmationsRequired <= _owners.length,"invalid number of required confirmations");
+
+		for (uint i = 0; i < _owners.length; i++) {
+			address owner = _owners[i];
+
+			require(owner != address(0), "invalid owner");
+			require(!isOwner[owner], "owner not unique");
+
+			isOwner[owner] = true;
+			owners.push(owner);
 		}
-		
-		//Update the struct of the Staker - Stake(0, tsStart, tsUpdated, rewards, false);
-		stakes[_stakingToken][msg.sender].stakingAmount = 0;
-		stakes[_stakingToken][msg.sender].staked = false;
 
-		//Transfer the staked token
-		IERC20(_stakingToken).transfer(msg.sender,_amountToUnstake);
-		emit Unstaking(msg.sender,_amountToUnstake,_stakingToken);
+		numConfirmationsRequired = _numConfirmationsRequired;
+	}
+
+	receive() external payable {
+		emit Deposit(msg.sender, msg.value, address(this).balance);
+	}
+
+	function submitTransaction(address _to, uint _value, bytes memory _data) public onlyOwner {
+		uint txIndex = transactions.length;
+
+		transactions.push(Transaction({to: _to, value: _value, data: _data, executed: false, numConfirmations: 0}));
+
+		emit SubmitTransaction(msg.sender, txIndex, _to, _value, _data);
+	}
+
+	function confirmTransaction(uint _txIndex) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) notConfirmed(_txIndex){
+		Transaction storage transaction = transactions[_txIndex];
+		transaction.numConfirmations += 1;
+		isConfirmed[_txIndex][msg.sender] = true;
+
+		emit ConfirmTransaction(msg.sender, _txIndex);
+	}
+
+	function executeTransaction(uint _txIndex) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) {
+		Transaction storage transaction = transactions[_txIndex];
+
+		require(transaction.numConfirmations >= numConfirmationsRequired, "cannot execute tx");
+
+		transaction.executed = true;
+
+		(bool success, ) = transaction.to.call{value: transaction.value}(transaction.data);
+		require(success, "tx failed");
+
+		emit ExecuteTransaction(msg.sender, _txIndex);
+	}
+
+	function revokeConfirmation(uint _txIndex) public onlyOwner txExists(_txIndex) notExecuted(_txIndex){
+		Transaction storage transaction = transactions[_txIndex];
+
+		require(isConfirmed[_txIndex][msg.sender], "tx not confirmed");
+
+		transaction.numConfirmations -= 1;
+		isConfirmed[_txIndex][msg.sender] = false;
+
+		emit RevokeConfirmation(msg.sender, _txIndex);
+	}
+
+	function getOwners() public view returns (address[] memory) {
+		return owners;
+	}
+
+	function getTransactionCount() public view returns (uint) {
+		return transactions.length;
+	}
+
+	function getTransaction(uint _txIndex) public view returns (address to, uint value, bytes memory data, bool executed, uint numConfirmations){
+		Transaction storage transaction = transactions[_txIndex];
+
+		return (transaction.to, transaction.value, transaction.data, transaction.executed, transaction.numConfirmations);
+	}
+}
+
+contract TestContract {
+    uint public i;
+	string public str;
+
+	function callMe(uint x) public {
+        i += x;
+    }
+
+    function getData(uint x) public pure returns (bytes memory) {
+        return abi.encodeWithSignature("callMe(uint256)", x);
     }
 
 
-	/* ============= REWARDS ============= */
-
-	/**
-	 * Computes rewards and mint them to msg.sender
-	 * _token : staked token
-	 * require max every 30 sec can be called
-	*/
-    function getReward(address _stakingToken) public stakerExist(_stakingToken,msg.sender){
-		require(block.timestamp - stakes[_stakingToken][msg.sender].updateTimestamp > 30 seconds,"stop spam");
-		//Compute rewards = previous rewards calc (exemple : different staking time of the same token) + new rewards
-		uint256 _rewardsInToken = stakes[_stakingToken][msg.sender].rewards;
-		if(stakes[_stakingToken][msg.sender].stakingAmount > 0) {
-			_rewardsInToken += calcRewardPerStake(_stakingToken, msg.sender);
-			//Update the timestamp
-			stakes[_stakingToken][msg.sender].updateTimestamp = block.timestamp;
-		}
-		
-		//Re entrancy rewards = 0;
-		stakes[_stakingToken][msg.sender].rewards = 0;
-		//Convert rewards here
-		uint256 _rewardsInPrice = calcRewardPrice(_stakingToken, _rewardsInToken);
-		//Mint rewards
-		rewardsToken.mint(msg.sender,_rewardsInPrice);
-		emit Rewarding(msg.sender, _rewardsInPrice, address(rewardsToken));
+    function callMe1(uint j, uint y) public {
+        i += j+y;
     }
 
-	//Get the rewards in "staked token" : rewardRate/100 * staking period * share of the pool at updateTime
-    function calcRewardPerStake(address _token, address _sender) view internal returns(uint) {
-		uint256 _rewards = DAILY_REWARD_RATE * (block.timestamp - stakes[_token][_sender].updateTimestamp) * stakes[_token][_sender].stakingAmount / (totalTokenSupply[_token] * 100 );
-		//Update the timestamp
-		//stakes[_token][_sender].updateTimestamp = block.timestamp;
-        return _rewards;
-    }
-	
-	//Get the rewards in price : _rewards * price[_token]	
-	function calcRewardPrice(address _token, uint256 _rewards) view public returns(uint) {
-		return _rewards * getPriceOfToken(_token);
+    function getData1(uint x, uint y) public pure returns (bytes memory) {
+        return abi.encodeWithSignature("callMe1(uint256,uint256)", x, y);
     }
 
-	//Get the price in USD with chainlink of the _token
-    function getPriceOfToken(address _token) view public returns(uint){
-		try priceConsumer.getPrice(_token,Denominations.USD) returns(int x){
-			return uint(x<0?-x:x);
-		} catch {
-			return 1;
-		}
-	}
+	
+    function callMe2(uint x, string memory y) public {
+        i=x;
+		str=y;
+    }
 
-	
-	/* ============= HELPERS ============= */
-	
-	function getTokenList() public view returns(address[] memory){
-		return listOfToken;
-	}
-	
-	//Plus checked the constructor
+    function getData2(uint x, string memory y) public pure returns (bytes memory) {
+        return abi.encodeWithSignature("callMe2(uint256,string)", x, y);
+    }
 }
